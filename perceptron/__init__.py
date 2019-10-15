@@ -1,2 +1,4 @@
-from perceptron.perceptron import learn, learn_bipolar
-from perceptron.adaline import learn_adaline
+from perceptron.adaline import adaline
+from perceptron.consts import *
+from perceptron.perceptron import perceptron_binary, perceptron_bipolar
+from perceptron.simulation import *

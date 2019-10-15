@@ -1,60 +1,50 @@
 import numpy as np
-from time import sleep
 
-from perceptron import learn, learn_bipolar
-from adaline import learn_adaline
-
-
-INPUT = np.asarray([[0, 0], [0, 1], [1, 0], [1, 1]])
-AND_OUTPUT = np.asarray([[0], [0], [0], [1]])
-OR_OUTPUT = np.asarray([[0], [1], [1], [1]])
+from adaline import adaline
+from consts import *
+from simulation import *
 
 
-ADALINE_INPUT = np.asarray([[1, -1, -1], [1, -1, 1], [1, 1, -1], [1, 1, 1]])
-ADALINE_AND_OUTPUT = np.asarray([[-1], [-1], [-1], [1]])
-ADALINE_OR_OUTPUT = np.asarray([[-1], [1], [1], [1]])
+# def perceptron(func_name, simulation_func, input, output):
+#     print(func_name)
+#     weights = np.random.uniform(-1, 1, 3)
+#     print(weights)
+#     result, epochs = simulation_func(weights=weights, alpha=0.01)
+#     print(f'result weights: {result}, epochs:{epochs}')
+#     print('input  output  calculated_output')
+#     for i in range(input.shape[0]):
+#         print(f'{input[i]}  {output[i]}  {input[i] @ result}')
 
 
-INPUT_BIPOLAR = ADALINE_INPUT
-AND_OUTPUT_BIPOLAR = ADALINE_AND_OUTPUT
-OR_OUTPUT_BIPOLAR = ADALINE_OR_OUTPUT
-
-if __name__== "__main__":
-    print('AND')
-    weights = np.random.rand(3)
-    print(weights)
-    result = learn_adaline(input=ADALINE_INPUT, output=ADALINE_AND_OUTPUT, weights=weights)
-    print('result weights:', result)
-    for row in range(ADALINE_INPUT.shape[0]):
-        print(ADALINE_INPUT[row], '   ', ADALINE_INPUT[row] @ result, ADALINE_AND_OUTPUT[row])
-    print('OR')
-    weights = np.random.rand(3)
-    print(weights)
-    result = learn_adaline(input=ADALINE_INPUT, output=ADALINE_OR_OUTPUT, weights=weights)
-    print('result weights:', result)
-    for row in range(ADALINE_INPUT.shape[0]):
-        print(ADALINE_INPUT[row], '   ', ADALINE_INPUT[row] @ result, ADALINE_OR_OUTPUT[row])
-
-    # print('AND')
-    # weights = np.random.rand(2)
-    # print(weights)
-    # print(learn(input=INPUT, output=AND_OUTPUT, weights=weights))
-    # print('OR')
-    # weights = np.random.rand(2)
-    # print(weights)
-    # print(learn(input=INPUT, output=OR_OUTPUT, weights=weights))
-
-    # print('AND')
-    # weights = np.random.rand(3)
-    # print(weights)
-    # print(learn_bipolar(input=INPUT_BIPOLAR, output=AND_OUTPUT_BIPOLAR, weights=weights))
-    # print('OR')
-    # weights = np.random.rand(3) * 2 - 1
-    # print(weights)
-    # print(learn_bipolar(input=INPUT_BIPOLAR, output=OR_OUTPUT_BIPOLAR, weights=weights))
-
-    # arr = np.asarray([0, 1, 2, 3])
-    # print(np.random.shuffle(arr))
-    # print(arr)
-    # for i in arr:
-    #     print(i)
+# if __name__== "__main__":
+#     # perceptron_binary_and()
+#     # perceptron_binary_or()
+#     #
+#     # perceptron_bipolar_and()
+#     # perceptron_bipolar_or()
+#
+#     # perceptron(func_name='AND', simulation_func=perceptron_binary_func_and, input=INPUT, output=AND_OUTPUT)
+#     # perceptron(func_name='OR', simulation_func=perceptron_binary_func_or, input=INPUT, output=OR_OUTPUT)
+#     #
+#     # perceptron(func_name='AND', simulation_func=perceptron_bipolar_func_and, input=INPUT_BIPOLAR, output=AND_OUTPUT_BIPOLAR)
+#     # perceptron(func_name='OR', simulation_func=perceptron_bipolar_func_or, input=INPUT_BIPOLAR, output=OR_OUTPUT_BIPOLAR)
+#
+#     # adaline(func_name='AND', output=AND_OUTPUT_BIPOLAR)
+#     # adaline(func_name='OR', output=OR_OUTPUT_BIPOLAR)
+#
+#     alpha_simulation()
+#
+#     # print('AND')
+#     # weights = np.random.rand(3)
+#     # print(weights)
+#     # print(learn_bipolar(input=INPUT_BIPOLAR, output=AND_OUTPUT_BIPOLAR, weights=weights))
+#     # print('OR')
+#     # weights = np.random.rand(3) * 2 - 1
+#     # print(weights)
+#     # print(learn_bipolar(input=INPUT_BIPOLAR, output=OR_OUTPUT_BIPOLAR, weights=weights))
+#
+#     # arr = np.asarray([0, 1, 2, 3])
+#     # print(np.random.shuffle(arr))
+#     # print(arr)
+#     # for i in arr:
+#     #     print(i)

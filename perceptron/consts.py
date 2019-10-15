@@ -1,6 +1,6 @@
 import numpy as np
 
-INPUT = np.asarray([[0, 0], [0, 1], [1, 0], [1, 1]])
+INPUT = np.asarray([[1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]])
 AND_OUTPUT = np.asarray([[0], [0], [0], [1]])
 OR_OUTPUT = np.asarray([[0], [1], [1], [1]])
 
