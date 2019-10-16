@@ -1,0 +1,1 @@
+{"algo_name": "ADALINE_AND", "avg_epochs": [224.92, 112.77, 57.75, 24.51, 13.07, 7.53, 4.59], "params": [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05], "params_name": "alphas", "w_range": 0.2, "max_err": 1.5, "file_name": "ADALINE_AND_alphas_0.0005_0.001_0.002_0.005_0.01_0.02_0.05_err_1.5.json"}

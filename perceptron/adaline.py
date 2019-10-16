@@ -11,9 +11,10 @@ def adaline(input, output, weights, alpha, max_err):
         for i in order:
             result[i] = input[i] @ weights
             delta = output[i] - result[i]
-            if(delta * delta > max_err):
-                is_finished = False
-                weights = weights + 2 * delta * alpha * input[i]
+            weights = weights + 2 * delta * alpha * input[i]
         # print(f'                      weights: {weights}')
+        # print(np.sum((output - result) ** 2))
+        if (np.sum((output - result) ** 2) > max_err):
+            is_finished = False
         epochs += 1
     return weights, epochs

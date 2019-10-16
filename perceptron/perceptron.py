@@ -27,9 +27,9 @@ def bipolar_result(elem):
     return 1 if elem > 0 else -1
 
 
-def perceptron_binary(input, output, weights, alpha):
+def perceptron_binary(input, output, weights, alpha, **kwargs):
     return learn(input, output, weights, alpha, result_func=binary_result)
 
 
-def perceptron_bipolar(input, output, weights, alpha):
+def perceptron_bipolar(input, output, weights, alpha, **kwargs):
     return learn(input, output, weights, alpha, result_func=bipolar_result)

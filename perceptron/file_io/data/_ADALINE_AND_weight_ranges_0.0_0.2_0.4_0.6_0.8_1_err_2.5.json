@@ -1,0 +1,1 @@
+{"algo_name": "ADALINE_AND", "avg_epochs": [6.0, 5.98, 6.42, 7.28, 8.17, 9.83], "params": [0.0, 0.2, 0.4, 0.6, 0.8, 1], "params_name": "weight_ranges", "max_err": 2.5, "file_name": "ADALINE_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1_err_2.5.json"}

@@ -6,8 +6,8 @@ from consts import *
 
 class SimulationType:
     @staticmethod
-    def generate(func, input, output, name):
-        return {'func': func, 'input': input, 'output': output, 'name': name}
+    def generate(func, input, output, algo_name):
+        return {'func': func, 'input': input, 'output': output, 'algo_name': algo_name}
 
     ADALINE_AND = generate.__func__(adaline, INPUT_BIPOLAR, AND_OUTPUT_BIPOLAR, 'ADALINE_AND')
     ADALINE_OR = generate.__func__(adaline, INPUT_BIPOLAR, OR_OUTPUT_BIPOLAR, 'ADALINE_OR')
