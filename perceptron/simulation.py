@@ -68,31 +68,22 @@ def run_weight_ranges_simulation():
     w_ranges=[0.0, 0.2, 0.4, 0.6, 0.8, 1]
     alpha=0.01
     for type in [
-        SimulationType.ADALINE_AND,
-        # SimulationType.PERCEPTRON_BIPOLAR_AND,
-        # SimulationType.PERCEPTRON_BINARY_AND,
+        SimulationType.ADALINE_OR,
+        SimulationType.PERCEPTRON_BIPOLAR_OR,
+        SimulationType.PERCEPTRON_BINARY_OR,
     ]:
         result = run_many(params=w_ranges, n=n, simulation=weight_ranges_simulation, **type, alpha=alpha,
                           w_ranges=w_ranges, max_err=2.0)
-        save(f"file_io/data/_{result['file_name']}", result)
+        save(f"file_io/data/__{result['file_name']}", result)
 
 if __name__== "__main__":
     # run_one(**SimulationType.PERCEPTRON_BIPOLAR_AND, alpha=0.01, w_range=0.2)
     # run_one(**SimulationType.PERCEPTRON_BIPOLAR_OR, alpha=0.01, w_range=0.2)
-    # run_one(**SimulationType.PERCEPTRON_BINARY_AND, alpha=0.01, w_range=0.2)
-    # run_one(**SimulationType.PERCEPTRON_BINARY_OR, alpha=0.01, w_range=0.2)
-    # run_one(**SimulationType.ADALINE_AND, alpha=0.01, w_range=0.2, max_err=2.0)
-    # run_one(**SimulationType.ADALINE_OR, alpha=0.01, w_range=0.2, max_err=2.0)
+    # run_one(**SimulationType.PERCEPTRON_BINARY_AND, alpha=0.01, w_range=0.1)
+    # run_one(**SimulationType.PERCEPTRON_BINARY_OR, alpha=0.01, w_range=0.1)
+    run_one(**SimulationType.ADALINE_AND, alpha=0.01, w_range=0.2, max_err=2.0)
+    run_one(**SimulationType.ADALINE_OR, alpha=0.01, w_range=0.2, max_err=2.0)
 
     # run_alphas_simulation()
-    run_weight_ranges_simulation()
-
-    # n = 25
-    # w_ranges=[0.2, 0.4, 0.6, 0.8, 1]
-    # alpha=0.01
-    # run_many(params=w_ranges, n=n, simulation=weight_ranges_simulation, **SimulationType.ADALINE_OR,
-    #          alpha=alpha, w_ranges=w_ranges, max_err=1.1)
-    # run_many(params=w_ranges, n=n, simulation=weight_ranges_simulation, **SimulationType.PERCEPTRON_BIPOLAR_OR,
-    #          alpha=alpha, w_ranges=w_ranges)
-    # run_many(params=w_ranges, n=n, simulation=weight_ranges_simulation, **SimulationType.PERCEPTRON_BINARY_OR,
-    #          alpha=alpha, w_ranges=w_ranges)
+    # run_weight_ranges_simulation()
+i

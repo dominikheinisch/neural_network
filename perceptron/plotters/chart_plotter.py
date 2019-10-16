@@ -10,13 +10,11 @@ def scope_x(metadata, x_vec):
         return x_vec
 
 
-def set_plt_data(plt, title, names, x_name, is_log):
+def set_plt_data(plt, title, names, x_name):
     plt.title(title)
     plt.ylabel('avg epochs')
-    if is_log:
-        plt.yscale('log')
     plt.xlabel(x_name)
-    plt.legend(names, loc='upper left')
+    plt.legend(names, loc='upper right')
     plt.show()
 
 
@@ -47,7 +45,9 @@ def plot_param_to_epochs(files, is_log=False):
     x_stick = [[-x, x] for x in x_list]
     plt.xticks(x_list, x_stick)
     plt.ylim(1, 100)
-    set_plt_data(plt, title, names, x_name, is_log)
+    if is_log:
+        plt.yscale('log')
+    set_plt_data(plt, title, names, x_name)
 
 
 
@@ -67,6 +67,8 @@ if __name__ == "__main__":
 
     filenames = [path_prefix + postfix for postfix in [
         '_ADALINE_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1_err_1.5.json',
+        '_ADALINE_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1_err_2.0.json',
+        '_ADALINE_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1_err_2.5.json',
         '_PERCEPTRON_BINARY_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1.json',
         '_PERCEPTRON_BIPOLAR_AND_weight_ranges_0.0_0.2_0.4_0.6_0.8_1.json',
     ]]
