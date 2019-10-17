@@ -1,3 +1,5 @@
 .idea
 __pycache__
 perceptron/file_io/data*
+*.pkl
+!*.pkl.gz
