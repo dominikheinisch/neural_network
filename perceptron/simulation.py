@@ -7,14 +7,12 @@ from file_io import save
 def alphas_simulation(func, alphas, w_range, **kwargs):
     results = np.asarray([func(weights=np.random.uniform(-w_range, w_range, 3), alpha=a, **kwargs) for a in alphas])
     epochs = results[:, 1]
-    # print([(f'epochs={epochs}, alpha={a}') for (_, epochs), a in zip(results, alphas)])
     return epochs, alphas
 
 
 def weight_ranges_simulation(func, alpha, w_ranges, **kwargs):
     results = np.asarray([func(weights=np.random.uniform(-w_r, w_r, 3), alpha=alpha, **kwargs) for w_r in w_ranges])
     epochs = results[:, 1]
-    # print([(f'epochs={epochs}, w_range=[-{w_r}:{w_r}]') for (_, epochs), w_r in zip(results, w_ranges)])
     return epochs, w_ranges
 
 
@@ -43,10 +41,7 @@ def run_one(algo_name, func, input, output, alpha, w_range, **kwargs):
     print(f'result weights: {result}, epochs:{epochs}')
     print('input  output  calculated_output')
     for i in range(input.shape[0]):
-        print(f'{input[i]}  {output[i]}  {input[i] @ result}')
-    # print('DDDDDD')
-    # print(f'{np.asarray([1, 0, 1])}  {output[i]}  {np.asarray([1, 0, -1]) @ result}')
-    # print(f'{np.asarray([1, 1, 0])}  {output[i]}  {np.asarray([1, -1, 0]) @ result}')
+        print(f'{input[i]}  {output[i]}  {(input[i] @ result):.3f}')
 
 
 def run_alphas_simulation():
@@ -57,10 +52,13 @@ def run_alphas_simulation():
         # SimulationType.ADALINE_AND,
         # SimulationType.PERCEPTRON_BIPOLAR_AND,
         # SimulationType.PERCEPTRON_BINARY_AND,
+        SimulationType.ADALINE_OR,
+        # SimulationType.PERCEPTRON_BIPOLAR_OR,
+        # SimulationType.PERCEPTRON_BINARY_OR,
     ]:
         result = run_many(params=alphas, n=n, simulation=alphas_simulation, **type, alphas=alphas,
                           w_range=w_range, max_err=2.5)
-        save(f"file_io/data/{result['file_name']}", result)
+        save(f"file_io/data/__{result['file_name']}", result)
 
 
 def run_weight_ranges_simulation():
@@ -74,16 +72,17 @@ def run_weight_ranges_simulation():
     ]:
         result = run_many(params=w_ranges, n=n, simulation=weight_ranges_simulation, **type, alpha=alpha,
                           w_ranges=w_ranges, max_err=2.0)
-        save(f"file_io/data/__{result['file_name']}", result)
+        save(f"file_io/data/_{result['file_name']}", result)
 
 if __name__== "__main__":
+    np.set_printoptions(precision=3)
+
     # run_one(**SimulationType.PERCEPTRON_BIPOLAR_AND, alpha=0.01, w_range=0.2)
     # run_one(**SimulationType.PERCEPTRON_BIPOLAR_OR, alpha=0.01, w_range=0.2)
     # run_one(**SimulationType.PERCEPTRON_BINARY_AND, alpha=0.01, w_range=0.1)
     # run_one(**SimulationType.PERCEPTRON_BINARY_OR, alpha=0.01, w_range=0.1)
-    run_one(**SimulationType.ADALINE_AND, alpha=0.01, w_range=0.2, max_err=2.0)
-    run_one(**SimulationType.ADALINE_OR, alpha=0.01, w_range=0.2, max_err=2.0)
+    # run_one(**SimulationType.ADALINE_AND, alpha=0.01, w_range=0.2, max_err=1.2)
+    # run_one(**SimulationType.ADALINE_OR, alpha=0.01, w_range=0.2, max_err=1.2)
 
-    # run_alphas_simulation()
+    run_alphas_simulation()
     # run_weight_ranges_simulation()
-i
