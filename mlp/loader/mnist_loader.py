@@ -1,5 +1,3 @@
-# import mlp.data as data_source
-
 import pickle
 import gzip
 from os import path
@@ -17,21 +15,12 @@ def load_data(data_path=DATA_PATH):
 
 def load_data_wrapper(data_path=DATA_PATH):
     tr_d, va_d, te_d = load_data(data_path)
-    training_inputs, validation_inputs, test_inputs = [prepare_input(data)
-                                                       for data in [tr_d[0], va_d[0], te_d[0]]]
-        # tuple(reshape_input(d[0]) for d in (tr_d, va_d, te_d))
-
+    training_inputs, validation_inputs, test_inputs = [prepare_input(data) for data in [tr_d[0], va_d[0], te_d[0]]]
     training_results, validation_results, test_results = [vectorize_results(data)
                                                           for data in [tr_d[1], va_d[1], te_d[1]]]
-
     validation_data = (validation_inputs, validation_results)
     training_data = (training_inputs, training_results)
     test_data = (test_inputs, test_results)
-
-
-    # inputs = tuple(reshape_input(d[0]) for d in (tr_d, va_d, te_d))
-    # results = vectorize_results(tr_d[1]), va_d[1], te_d[1]
-    # training_data, validation_data, test_data = (zip(inputs, results))
     return training_data, validation_data, test_data
 
 
@@ -73,22 +62,11 @@ def vectorize_result(y):
 
 
 if __name__ == "__main__":
+    # print(2.66305923e-02 * 0.06037682)
+    # print(1.60787056e-03)
     tr, va, te = load_data("../data")
 
     tr_zip, va_zip, te_zip = load_data_wrapper("../data")
     for inp, out in tr_zip:
         pass
-        # print(out)
-
-    a = 1
-    print('a')
-
-    res = np.zeros((10, 1))
-
-
-    print(res)
-    # inputs, outputs = extract(te)
-    # a = test_border(inputs)
-    #
-    # print(tr[0])
-    # # load_data_wrapper()
+        print(out)
