@@ -20,23 +20,14 @@ activation_func_prim = np.vectorize(activation_func_prim)
 
 
 def check_result(hidden_weight, output_weight, test_input, test_output):
-    res = np.zeros(shape=(test_output.shape))
-    for i in range(test_input.shape[0]):
-        net_hidden = test_input[i] @ hidden_weight
-        hidden = activation_func(net_hidden)
-        net_output = hidden @ output_weight
-        output = activation_func(net_output)
-        # print(output)
-        # print(np.argmax(output))
-        res[i] = output
-        # res[i] = 1 if test_output[i, np.argmax(output)] == 1 else 0
+    net_hidden = test_input @ hidden_weight
+    hidden = activation_func(net_hidden)
+    net_output = hidden @ output_weight
+    output = activation_func(net_output)
+    res = output
     res = np.argmax(res, axis=1)
     output_res = np.argmax(test_output, axis=1)
-    a = 0
     return np.sum(output_res == res) / output_res.shape[0]
-    # vectorized = vectorize_results(res)
-    # a =0
-    # return np.sum(vectorized & test_output) / vectorized.shape[0]
 
 
 if __name__ == "__main__":
