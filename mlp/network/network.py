@@ -2,6 +2,7 @@ import math
 import numpy as np
 
 from loader.mnist_loader import load_data, load_data_wrapper, vectorize_results
+from saver.saver import save
 
 
 def sigmoid(x):
@@ -48,18 +49,20 @@ if __name__ == "__main__":
     input_data_len = tr_in.shape[1]
     hidden_neurones_size = 50
     output_neurones_size = 10
+    weights = []
     weights1 = np.random.uniform(low=-1, high=1, size=(input_data_len * hidden_neurones_size))
     weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
 
     weights2 = np.random.uniform(low=-1, high=1, size=(hidden_neurones_size * output_neurones_size))
     weights2 = np.reshape(weights2, newshape=(hidden_neurones_size, output_neurones_size))
 
+    weights.append([weights1, weights2])
     print('result: ', check_result(weights1, weights2, *te_zip))
     # print(weights1.shape)
     # print(tr_in.shape)
     # print(tr_out.shape)
 
-    for j in range(0):
+    for j in range(3):
         for i in range(50000):
             net_hidden = tr_in[i] @ weights1
             hidden = activation_func(net_hidden)
@@ -99,3 +102,5 @@ if __name__ == "__main__":
             if (i + 1) % 1000 == 0:
                 print(i)
         print(j, ' result: ', check_result(weights1, weights2, *te_zip))
+        weights.append([weights1, weights2])
+    save(data=weights, filename='test_weights_2.pkl')

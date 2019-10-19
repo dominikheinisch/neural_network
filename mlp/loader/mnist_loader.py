@@ -1,5 +1,4 @@
 import pickle
-import gzip
 from os import path
 import numpy as np
 
