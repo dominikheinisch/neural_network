@@ -1,6 +1,6 @@
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
-from network import calc_prediction_accuracy
+from prediction import calc_prediction_accuracy
 
 def print_result(filename, test_data):
     te_in, te_out = test_data
