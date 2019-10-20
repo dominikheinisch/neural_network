@@ -11,4 +11,4 @@ def print_result(filename):
 
 
 if __name__ == "__main__":
-    print_result('test_weights_2.pkl')
+    print_result('test_weights.pkl')

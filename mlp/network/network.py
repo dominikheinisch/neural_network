@@ -22,7 +22,9 @@ activation_func_prim = np.vectorize(activation_func_prim)
 def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_output):
     net_hidden = test_input @ hidden_weight
     hidden = activation_func(net_hidden)
-    net_output = hidden @ output_weight
+    hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + 1))
+    hidden_with_bias[:, 1:] = hidden
+    net_output = hidden_with_bias @ output_weight
     output = activation_func(net_output)
     res = output
     res = np.argmax(res, axis=1)
@@ -44,8 +46,9 @@ if __name__ == "__main__":
     weights1 = np.random.uniform(low=-1, high=1, size=(input_data_len * hidden_neurones_size))
     weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
 
-    weights2 = np.random.uniform(low=-1, high=1, size=(hidden_neurones_size * output_neurones_size))
-    weights2 = np.reshape(weights2, newshape=(hidden_neurones_size, output_neurones_size))
+    hidden_neurones_with_bias_size = hidden_neurones_size + 1
+    weights2 = np.random.uniform(low=-1, high=1, size=(hidden_neurones_with_bias_size * output_neurones_size))
+    weights2 = np.reshape(weights2, newshape=(hidden_neurones_with_bias_size, output_neurones_size))
 
     weights.append([weights1, weights2])
     print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
@@ -57,10 +60,11 @@ if __name__ == "__main__":
         for i in range(50000):
             net_hidden = tr_in[i] @ weights1
             hidden = activation_func(net_hidden)
-            # print(hidden.shape)
+            hidden_with_bias = np.ones(shape=(hidden.shape[0] + 1))
+            hidden_with_bias[1:] = hidden
             # print(hidden)
 
-            net_output = hidden @ weights2
+            net_output = hidden_with_bias @ weights2
             output = activation_func(net_output)
             # print(output.shape)
             # print('output', output, tr_out[i])
@@ -72,7 +76,7 @@ if __name__ == "__main__":
             # print('--------------------------------')
             err_out = (tr_out[i] - output) * activation_func_prim(net_output)
             # print('temp:')
-            temp = weights2 @ err_out
+            temp = weights2[1:] @ err_out
             # print(temp)
             # print(activation_func_prim(net_hidden))
             err_hidden = temp * activation_func_prim(net_hidden)
@@ -80,7 +84,7 @@ if __name__ == "__main__":
             # print('err_out', err_out.shape)
             # print('hidden', hidden.shape)
 
-            weights2_delta = np.transpose(np.tile(hidden, reps=(err_out.shape[0], 1))) * (alpha * err_out)
+            weights2_delta = np.transpose(np.tile(hidden_with_bias, reps=(err_out.shape[0], 1))) * (alpha * err_out)
             weights2 = weights2 + weights2_delta
 
             weights1_delta = np.transpose(np.tile(tr_in[i] * alpha, reps=(err_hidden.shape[0], 1))) * (alpha * err_hidden)
@@ -94,4 +98,4 @@ if __name__ == "__main__":
                 print(i)
         print(j, ' result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
         weights.append([weights1, weights2])
-    save(data=weights, filename='test_weights_3.pkl')
+    save(data=weights, filename='test_weights_5.pkl')

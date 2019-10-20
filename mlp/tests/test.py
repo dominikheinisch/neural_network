@@ -7,9 +7,9 @@ def test_calc_prediction_accuracy():
     _, _, test_data = load_data_wrapper("../data")
     te_in, te_out = test_data
     random_weights = weights[0]
-    assert(calc_prediction_accuracy(*random_weights, te_in, te_out) == 0.0919)
-    calculated_weights = weights[1]
-    assert(calc_prediction_accuracy(*calculated_weights, te_in, te_out) == 0.5925)
+    assert(calc_prediction_accuracy(*random_weights, te_in, te_out) == 0.0993)
+    calculated_weights = weights[3]
+    assert(calc_prediction_accuracy(*calculated_weights, te_in, te_out) == 0.7478)
 
 
 if __name__ == "__main__":
