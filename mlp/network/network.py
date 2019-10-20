@@ -1,22 +1,8 @@
-import math
 import numpy as np
 
-from loader.mnist_loader import load_data, load_data_wrapper, vectorize_results
+from activation_function import activation_func, activation_func_prim
+from loader.mnist_loader import load_data_wrapper
 from saver.saver import save
-
-
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
-
-
-def activation_func_prim(x):
-    sgm = sigmoid(x)
-    return sgm * (1 - sgm)
-
-
-sigmoid_vectorize = np.vectorize(sigmoid)
-activation_func = sigmoid_vectorize
-activation_func_prim = np.vectorize(activation_func_prim)
 
 HIDDEN_BIAS = 1
 
@@ -35,7 +21,6 @@ def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_outp
 
 
 if __name__ == "__main__":
-    # tr, va, te = load_data("../data")
     tr_zip, va_zip, te_zip = load_data_wrapper("../data")
     tr_in, tr_out = tr_zip
 
@@ -59,7 +44,7 @@ if __name__ == "__main__":
     # print(tr_out.shape)
 
     for j in range(1):
-        for i in range(1000):
+        for i in range(10000):
             net_hidden = tr_in[i] @ weights1
             hidden = activation_func(net_hidden)
             hidden_with_bias = np.ones(shape=(hidden.shape[0] + HIDDEN_BIAS))
