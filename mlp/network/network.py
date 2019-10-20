@@ -19,7 +19,7 @@ activation_func = sigmoid_vectorize
 activation_func_prim = np.vectorize(activation_func_prim)
 
 
-def check_result(hidden_weight, output_weight, test_input, test_output):
+def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_output):
     net_hidden = test_input @ hidden_weight
     hidden = activation_func(net_hidden)
     net_output = hidden @ output_weight
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     weights2 = np.reshape(weights2, newshape=(hidden_neurones_size, output_neurones_size))
 
     weights.append([weights1, weights2])
-    print('result: ', check_result(weights1, weights2, *te_zip))
+    print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
     # print(weights1.shape)
     # print(tr_in.shape)
     # print(tr_out.shape)
@@ -92,6 +92,6 @@ if __name__ == "__main__":
             # print(weights1)
             if (i + 1) % 1000 == 0:
                 print(i)
-        print(j, ' result: ', check_result(weights1, weights2, *te_zip))
+        print(j, ' result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
         weights.append([weights1, weights2])
-    save(data=weights, filename='test_weights_2.pkl')
+    save(data=weights, filename='test_weights_3.pkl')
