@@ -18,12 +18,14 @@ sigmoid_vectorize = np.vectorize(sigmoid)
 activation_func = sigmoid_vectorize
 activation_func_prim = np.vectorize(activation_func_prim)
 
+HIDDEN_BIAS = 1
+
 
 def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_output):
     net_hidden = test_input @ hidden_weight
     hidden = activation_func(net_hidden)
-    hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + 1))
-    hidden_with_bias[:, 1:] = hidden
+    hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + HIDDEN_BIAS))
+    hidden_with_bias[:, HIDDEN_BIAS:] = hidden
     net_output = hidden_with_bias @ output_weight
     output = activation_func(net_output)
     res = output
@@ -46,7 +48,7 @@ if __name__ == "__main__":
     weights1 = np.random.uniform(low=-1, high=1, size=(input_data_len * hidden_neurones_size))
     weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
 
-    hidden_neurones_with_bias_size = hidden_neurones_size + 1
+    hidden_neurones_with_bias_size = hidden_neurones_size + HIDDEN_BIAS
     weights2 = np.random.uniform(low=-1, high=1, size=(hidden_neurones_with_bias_size * output_neurones_size))
     weights2 = np.reshape(weights2, newshape=(hidden_neurones_with_bias_size, output_neurones_size))
 
@@ -56,12 +58,12 @@ if __name__ == "__main__":
     # print(tr_in.shape)
     # print(tr_out.shape)
 
-    for j in range(3):
-        for i in range(50000):
+    for j in range(1):
+        for i in range(1000):
             net_hidden = tr_in[i] @ weights1
             hidden = activation_func(net_hidden)
-            hidden_with_bias = np.ones(shape=(hidden.shape[0] + 1))
-            hidden_with_bias[1:] = hidden
+            hidden_with_bias = np.ones(shape=(hidden.shape[0] + HIDDEN_BIAS))
+            hidden_with_bias[HIDDEN_BIAS:] = hidden
             # print(hidden)
 
             net_output = hidden_with_bias @ weights2
@@ -76,7 +78,7 @@ if __name__ == "__main__":
             # print('--------------------------------')
             err_out = (tr_out[i] - output) * activation_func_prim(net_output)
             # print('temp:')
-            temp = weights2[1:] @ err_out
+            temp = weights2[HIDDEN_BIAS:] @ err_out
             # print(temp)
             # print(activation_func_prim(net_hidden))
             err_hidden = temp * activation_func_prim(net_hidden)
@@ -98,4 +100,4 @@ if __name__ == "__main__":
                 print(i)
         print(j, ' result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
         weights.append([weights1, weights2])
-    save(data=weights, filename='test_weights_5.pkl')
+    save(data=weights, filename=f'test_weights_8_bias_{HIDDEN_BIAS}.pkl')
