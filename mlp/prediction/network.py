@@ -20,54 +20,7 @@ def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_outp
     return np.sum(output_res == res) / output_res.shape[0]
 
 
-def mlp(draw_range):
-    tr_zip, va_zip, te_zip = load_data_wrapper("../data")
-    tr_in, tr_out = tr_zip
-
-    alpha = 0.015
-    images_len = tr_in.shape[0]
-    input_data_len = tr_in.shape[1]
-    hidden_neurones_size = 50
-    output_neurones_size = 10
-    weights = []
-    weights1 = np.random.uniform(low=-draw_range, high=draw_range, size=(input_data_len * hidden_neurones_size))
-    weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
-
-    hidden_neurones_with_bias_size = hidden_neurones_size + HIDDEN_BIAS
-    weights2 = np.random.uniform(low=-draw_range, high=draw_range, size=(hidden_neurones_with_bias_size * output_neurones_size))
-    weights2 = np.reshape(weights2, newshape=(hidden_neurones_with_bias_size, output_neurones_size))
-
-    weights.append([weights1, weights2])
-    print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
-
-    for j in range(1):
-        for i in range(5000):
-            net_hidden = tr_in[i] @ weights1
-            hidden = activation_func(net_hidden)
-            hidden_with_bias = np.ones(shape=(hidden.shape[0] + HIDDEN_BIAS))
-            hidden_with_bias[HIDDEN_BIAS:] = hidden
-
-            net_output = hidden_with_bias @ weights2
-            output = activation_func(net_output)
-
-            err_out = (tr_out[i] - output) * activation_func_prim(net_output)
-            temp = weights2[HIDDEN_BIAS:] @ err_out
-            err_hidden = temp * activation_func_prim(net_hidden)
-
-            weights2_delta = np.transpose(np.tile(hidden_with_bias, reps=(err_out.shape[0], 1))) * (alpha * err_out)
-            weights2 = weights2 + weights2_delta
-
-            weights1_delta = np.transpose(np.tile(tr_in[i], reps=(err_hidden.shape[0], 1))) * (alpha * err_hidden)
-            weights1 = weights1 + weights1_delta
-
-            if (i + 1) % 1000 == 0:
-                print(f'progress print: {i}')
-        print(j, ' result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
-        weights.append([weights1, weights2])
-    return weights
-
-
-def mlp_batch(draw_range, batch_size, epochs):
+def mlp_batch(draw_range, batch_size, epochs, images_len_divider):
     tr_zip, va_zip, te_zip = load_data_wrapper("../data")
     tr_in, tr_out = tr_zip
 
@@ -89,7 +42,8 @@ def mlp_batch(draw_range, batch_size, epochs):
     weights.append([weights1, weights2])
     print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
 
-    batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(5000 // batch_size)]
+    batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len //
+                                                                           images_len_divider // batch_size)]
     for j in range(epochs):
         for batch_start, batch_end in batch_indexes:
             net_hidden = tr_in[batch_start:batch_end] @ weights1
@@ -121,8 +75,7 @@ def mlp_batch(draw_range, batch_size, epochs):
     return weights
 
 if __name__ == "__main__":
-    # save(data=mlp(draw_range=0.2), filename=f'test_weights_13_bias_{HIDDEN_BIAS}.pkl')
-
     batch = 1
     np.random.seed(0)
-    save(data=mlp_batch(draw_range=0.2, batch_size=batch, epochs=1), filename=f'test_mlp_weights_bias_{HIDDEN_BIAS}_batch_{batch}.pkl')
+    save(data=mlp_batch(draw_range=0.2, batch_size=batch, epochs=20, images_len_divider=1),
+         filename=f'test_weights_18_bias_{HIDDEN_BIAS}_batch_{batch}.pkl')

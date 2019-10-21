@@ -29,3 +29,4 @@ if __name__ == "__main__":
     # print_result('test_weights_12_bias_1.pkl', test_data)
     # print_result('test_weights_12_bias_1.pkl', validation_data)
     print_result('test_weights_12_bias_1.pkl', test_data)
+    print_result('test_weights_18_bias_1_batch_1.pkl', test_data)

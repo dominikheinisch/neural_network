@@ -2,7 +2,7 @@ import numpy as np
 
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
-from prediction.network import calc_prediction_accuracy, mlp
+from prediction.network import calc_prediction_accuracy, mlp_batch
 
 def test_calc_prediction_accuracy():
     weights = load(filename='test_weights.pkl')
@@ -17,7 +17,7 @@ def test_calc_prediction_accuracy():
 def test_mlp():
     loaded_weights = load(filename='test_mlp_weights_bias_1_batch_1.pkl')
     np.random.seed(0)
-    weights = mlp(draw_range=0.2)
+    weights = mlp_batch(draw_range=0.2, batch_size=1, epochs=1, images_len_divider=10)
     for (w11 , w12), (w21, w22) in zip(loaded_weights, weights):
         assert(np.allclose(a=w11, b=w21))
         assert (np.allclose(a=w12, b=w22))
@@ -75,9 +75,8 @@ def test_hidden_backprop_with_batch_2():
 
 
 if __name__ == "__main__":
-    # test_calc_prediction_accuracy()
-    # test_hidden_backprop()
-    # test_hidden_backprop_with_batch()
-    # test_hidden_backprop_with_batch_2()
-
+    test_calc_prediction_accuracy()
+    test_hidden_backprop()
+    test_hidden_backprop_with_batch()
+    test_hidden_backprop_with_batch_2()
     test_mlp()
