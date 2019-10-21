@@ -40,8 +40,8 @@ def mlp(draw_range):
     weights.append([weights1, weights2])
     print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
 
-    for j in range(10):
-        for i in range(images_len):
+    for j in range(1):
+        for i in range(5000):
             net_hidden = tr_in[i] @ weights1
             hidden = activation_func(net_hidden)
             hidden_with_bias = np.ones(shape=(hidden.shape[0] + HIDDEN_BIAS))
@@ -67,7 +67,7 @@ def mlp(draw_range):
     return weights
 
 
-def mlp_batch(draw_range, batch_size):
+def mlp_batch(draw_range, batch_size, epochs):
     tr_zip, va_zip, te_zip = load_data_wrapper("../data")
     tr_in, tr_out = tr_zip
 
@@ -89,8 +89,8 @@ def mlp_batch(draw_range, batch_size):
     weights.append([weights1, weights2])
     print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
 
-    batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len // batch_size)]
-    for j in range(20):
+    batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(5000 // batch_size)]
+    for j in range(epochs):
         for batch_start, batch_end in batch_indexes:
             net_hidden = tr_in[batch_start:batch_end] @ weights1
             hidden = activation_func(net_hidden)
@@ -124,4 +124,5 @@ if __name__ == "__main__":
     # save(data=mlp(draw_range=0.2), filename=f'test_weights_13_bias_{HIDDEN_BIAS}.pkl')
 
     batch = 1
-    save(data=mlp_batch(draw_range=0.2, batch_size=batch), filename=f'test_weights_17_bias_{HIDDEN_BIAS}_batch_{batch}.pkl')
+    np.random.seed(0)
+    save(data=mlp_batch(draw_range=0.2, batch_size=batch, epochs=1), filename=f'test_mlp_weights_bias_{HIDDEN_BIAS}_batch_{batch}.pkl')
