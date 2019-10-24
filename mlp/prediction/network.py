@@ -20,17 +20,17 @@ def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_outp
     return np.sum(output_res == res) / output_res.shape[0]
 
 
-def mlp_batch(draw_range, batch_size, epochs, images_len_divider):
-    tr_zip, va_zip, te_zip = load_data_wrapper("../data")
-    tr_in, tr_out = tr_zip
+def mlp_batch(data, alpha, draw_range, batch_size, epochs, momentum_param=0, images_len_divider=1):
+    training_data, validation_zip, test_data = data
+    tr_in, tr_out = training_data
 
-    alpha = 0.015
     images_len = tr_in.shape[0]
     assert(images_len % batch_size == 0)
     input_data_len = tr_in.shape[1]
     hidden_neurones_size = 50
     output_neurones_size = 10
     weights = []
+    accuracies = []
     weights1 = np.random.uniform(low=-draw_range, high=draw_range, size=(input_data_len * hidden_neurones_size))
     weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
 
@@ -40,11 +40,14 @@ def mlp_batch(draw_range, batch_size, epochs, images_len_divider):
     weights2 = np.reshape(weights2, newshape=(hidden_neurones_with_bias_size, output_neurones_size))
 
     weights.append([weights1, weights2])
-    print('result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
+    accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
+    print('result: ', accuracies[-1])
 
     batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len //
                                                                            images_len_divider // batch_size)]
     for j in range(epochs):
+        weights1_delta_prev = 0
+        weights2_delta_prev = 0
         for batch_start, batch_end in batch_indexes:
             net_hidden = tr_in[batch_start:batch_end] @ weights1
             hidden = activation_func(net_hidden)
@@ -60,22 +63,34 @@ def mlp_batch(draw_range, batch_size, epochs, images_len_divider):
 
             weights2_delta = np.transpose(np.tile(hidden_with_bias,
                                                   reps=(err_out.shape[1], 1, 1))) * err_out
-            weights2_delta = np.sum(weights2_delta, axis=1) * (alpha / err_out.shape[0])
-            weights2 = weights2 + weights2_delta
+            weights2_delta = np.sum(weights2_delta, axis=1) * alpha
+            weights2 = weights2 + weights2_delta + weights2_delta_prev  * momentum_param
+            weights2_delta_prev = weights2_delta
 
             weights1_delta = np.transpose(np.tile(tr_in[batch_start:batch_end],
                                                   reps=(err_hidden.shape[1], 1, 1))) * err_hidden
-            weights1_delta = np.sum(weights1_delta, axis=1) * (alpha / err_out.shape[0])
-            weights1 = weights1 + weights1_delta
+            weights1_delta = np.sum(weights1_delta, axis=1) * alpha
+            weights1 = weights1 + weights1_delta + weights1_delta_prev * momentum_param
+            weights1_delta_prev = weights1_delta
 
             if batch_start % 1000 == 0:
                 print(f'progress print: {batch_start}')
-        print(j, ' result: ', calc_prediction_accuracy(weights1, weights2, *te_zip))
         weights.append([weights1, weights2])
-    return weights
+        accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
+        print(j, ' result: ', accuracies[-1])
+    return {'weights': weights[-1], 'accuracies': accuracies}
+    # return weights
 
 if __name__ == "__main__":
-    batch = 1
-    np.random.seed(0)
-    save(data=mlp_batch(draw_range=0.2, batch_size=batch, epochs=20, images_len_divider=1),
-         filename=f'test_weights_18_bias_{HIDDEN_BIAS}_batch_{batch}.pkl')
+    loaded_data = load_data_wrapper("../data")
+
+    # alpha = 0.015 # for batch=1
+    alpha = 0.007
+    batch = 25
+    momentum_param = 0.25
+    epochs=20
+    # np.random.seed(0)
+    results = mlp_batch(data=loaded_data, alpha=alpha, draw_range=0.2, batch_size=batch, epochs=epochs,
+                        images_len_divider=1, momentum_param=momentum_param)
+    save(data=results, filename=f'test_weights_22_alpha_{alpha}_batch_{batch}_'
+                                f'momentum_{momentum_param}_epochs_{epochs}.pkl')
