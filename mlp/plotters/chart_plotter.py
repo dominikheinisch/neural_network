@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 from loader.loader import load
 
 
-def set_plt_data(plt, title):
+def set_plt_data(plt, title, names):
     plt.title(title)
     plt.xlabel('epochs')
     plt.ylabel('test data accuracy')
-    plt.legend('mlp', loc='upper right')
+    plt.legend(names, loc='upper right')
     plt.show()
 
 
-def plot_param_to_epochs(files, param_name, is_log=False):
+def plot_param_to_epochs(files, param_name, names, is_log=False):
     for f in files:
         loaded_dict = load(f)
         plt.plot(range(loaded_dict['epochs']), loaded_dict['accuracies'][1:])
@@ -21,7 +21,7 @@ def plot_param_to_epochs(files, param_name, is_log=False):
     # plt.ylim(1, 100)
     if is_log:        plt.yscale('log')
     title=f'mlp for {param_name}'
-    set_plt_data(plt, title)
+    set_plt_data(plt, title, names)
 
 
 
@@ -33,5 +33,5 @@ if __name__ == "__main__":
         'validation_alpha_0.03_batch_100_draw_range_1.0_epochs_45_res_0.9595_momentum_param_0.pkl',
 
     ]
-    plot_param_to_epochs(filenames, param_name='draw_range')
-    plot_param_to_epochs(filenames, param_name='draw_range', is_log=True)
+    plot_param_to_epochs(filenames, param_name='draw_range', names=['0.1', '0.1_2', '0.8', '1.0'])
+    plot_param_to_epochs(filenames, param_name='draw_range', names=['0.1', '0.1_2', '0.8', '1.0'], is_log=True)
