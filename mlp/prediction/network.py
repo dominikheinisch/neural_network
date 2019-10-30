@@ -32,7 +32,7 @@ def mlp(data, alpha, draw_range, batch_size, worse_result_limit=3, momentum_para
     output_neurones_size = 10
     weights = []
     validation_accuracies = []
-    accuracies = []
+    test_accuracies = []
     weights1 = np.random.uniform(low=-draw_range, high=draw_range, size=(input_data_len * hidden_neurones_size))
     weights1 = np.reshape(weights1, newshape=(input_data_len, hidden_neurones_size))
 
@@ -44,8 +44,8 @@ def mlp(data, alpha, draw_range, batch_size, worse_result_limit=3, momentum_para
     weights.append([weights1, weights2])
     validation_accuracies.append(calc_prediction_accuracy(weights1, weights2, *validation_data))
     print('validation_accuracies: ', validation_accuracies[-1])
-    accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
-    print('result: ', accuracies[-1])
+    test_accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
+    print('result: ', test_accuracies[-1])
 
     batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len //
                                                                            images_len_divider // batch_size)]
@@ -78,8 +78,8 @@ def mlp(data, alpha, draw_range, batch_size, worse_result_limit=3, momentum_para
                 weights1_delta = np.transpose(np.tile(tr_in[batch_start:batch_end],
                                                       reps=(err_hidden.shape[1], 1, 1))) * err_hidden
                 weights1_delta = np.sum(weights1_delta, axis=1) * alpha
-                weights1 = weights1 + weights1_delta + weights1_delta_prev * momentum_param
-                weights1_delta_prev = weights1_delta
+                weights1 = weights1 + weights1_delta #+ weights1_delta_prev * momentum_param
+                # weights1_delta_prev = weights1_delta
 
                 if batch_start % 10000 == 0:
                     print(f'progress print: {batch_start}')
@@ -90,13 +90,13 @@ def mlp(data, alpha, draw_range, batch_size, worse_result_limit=3, momentum_para
                 worse_result_counter = 0
             else:
                 worse_result_counter +=1
-            accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
-            print(epochs, ' result: ', accuracies[-1])
+            test_accuracies.append(calc_prediction_accuracy(weights1, weights2, *test_data))
+            print(epochs, ' result: ', test_accuracies[-1])
             print(epochs, ' validation_accuracies', validation_accuracies[-1])
             print(epochs, f'timer: {timer():.2f}')
     print('final validation_accuracies', validation_accuracies)
     print(epochs, f'timer: {timer():.2f}')
-    return {'weights': weights, 'accuracies': accuracies, 'epochs': epochs}
+    return {'weights': weights, 'test_accuracies': test_accuracies, 'epochs': epochs}
 
 
 if __name__ == "__main__":
