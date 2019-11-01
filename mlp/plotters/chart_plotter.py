@@ -40,15 +40,20 @@ def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=Fals
 
 def draw_chart(filenames, param_name):
     multiple_data = [prepare_avg_param(filename=f, param_name=param_name) for f in filenames]
+    print_results(multiple_data, param_name=param_name)
+    plot_param_to_epochs_for_many_results(multiple_data, param_name=param_name)
+    # plot_param_to_epochs_for_many_results(data, param_name=param_name, is_log=True)
+
+
+def print_results(multiple_data, param_name):
     max_size = max(data['avg_accuracies'].shape[0] for data in multiple_data)
-    print(max_size, len(multiple_data))
+    print(param_name)
+    print([data[param_name] for data in multiple_data])
     to_print = np.ones(shape=(max_size, len(multiple_data))) * -1
     for i in range(len(multiple_data)):
         data = multiple_data[i]['avg_accuracies']
         to_print[0:len(data), i] = data
     print(to_print)
-    plot_param_to_epochs_for_many_results(multiple_data, param_name=param_name)
-    # plot_param_to_epochs_for_many_results(data, param_name=param_name, is_log=True)
 
 
 if __name__ == "__main__":
