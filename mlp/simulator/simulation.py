@@ -5,11 +5,12 @@ from loader.mnist_loader import load_data_wrapper
 from saver.saver import save
 
 
-def get_simul_params(alpha, batch_size, draw_range, worse_result_limit, momentum_param):
+def get_simul_params(alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param):
     return {
         'alpha': alpha,
         'batch_size': batch_size,
         'draw_range': draw_range,
+        'hidden_neurones': hidden_neurones,
         'worse_result_limit': worse_result_limit,
         'momentum_param': momentum_param,
     }
@@ -38,8 +39,9 @@ if __name__ == "__main__":
     # # momentum_param = 0.25
     loaded_data = load_data_wrapper("../data")
     # params = get_simul_params(alpha=0.01, batch_size=25, draw_range=0.2, epochs=20, momentum_param=0)
-    params = get_simul_params(alpha=0.02, batch_size=100, draw_range=0.2, worse_result_limit=2, momentum_param=0)
-    alpha, batch_size, draw_range, worse_result_limit, momentum_param = [params[p] for p in params]
+    params = get_simul_params(alpha=0.04, batch_size=100, draw_range=0.2, hidden_neurones=15,
+                              worse_result_limit=2, momentum_param=0)
+    alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param = [params[p] for p in params]
 
     # single_res = run_once(func=mlp, data=loaded_data, params=params, images_len_divider=50)
     # print(single_res)
@@ -50,5 +52,6 @@ if __name__ == "__main__":
     times = 5
     many_res = run_many(times=times, func=mlp, data=loaded_data, params=params, images_len_divider=1)
     print(many_res)
-    save(data=many_res, filename=f'alpha_simulation_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
-                                 f'avg_epochs_{many_res["avg_epochs"]}_times_{times}.pkl')
+    save(data=many_res, filename=f'hidden_neurones_simulation_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
+                                 f'hidden_neurones_{hidden_neurones}_avg_epochs_{many_res["avg_epochs"]}'
+                                 f'_times_{times}.pkl')

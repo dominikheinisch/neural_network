@@ -21,14 +21,15 @@ def calc_prediction_accuracy(hidden_weight, output_weight, test_input, test_outp
     return np.sum(output_res == res) / output_res.shape[0]
 
 
-def mlp(data, alpha, draw_range, batch_size, worse_result_limit=3, momentum_param=0, images_len_divider=1):
+def mlp(data, alpha, draw_range, batch_size, hidden_neurones, worse_result_limit=2, momentum_param=0,
+        images_len_divider=1):
     training_data, validation_data, test_data = data
     tr_in, tr_out = training_data
 
     images_len = tr_in.shape[0]
     assert(images_len % batch_size == 0)
     input_data_len = tr_in.shape[1]
-    hidden_neurones_size = 50
+    hidden_neurones_size = hidden_neurones
     output_neurones_size = 10
     weights = []
     validation_accuracies = []
