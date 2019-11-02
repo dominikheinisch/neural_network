@@ -60,32 +60,33 @@ if __name__ == "__main__":
     draw_chart(
         param_name = 'draw_range',
         filenames=[
-        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.2_avg_epochs_24.4_times_5.pkl',
-        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.4_avg_epochs_24.2_times_5.pkl',
-        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.6_avg_epochs_25.0_times_5.pkl',
-        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.8_avg_epochs_23.8_times_5.pkl',
-        'draw_range_simulation_alpha_0.04_batch_100_draw_range_1.0_avg_epochs_27.6_times_5.pkl',
+        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.4_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
+        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.6_hidden_neurones_50_avg_epochs_25.0_times_5.pkl',
+        'draw_range_simulation_alpha_0.04_batch_100_draw_range_0.8_hidden_neurones_50_avg_epochs_23.8_times_5.pkl',
+        'draw_range_simulation_alpha_0.04_batch_100_draw_range_1.0_hidden_neurones_50_avg_epochs_27.6_times_5.pkl',
         ],
     )
 
     draw_chart(
         param_name = 'alpha',
         filenames=[
-        'alpha_simulation_alpha_0.005_batch_100_draw_range_0.2_avg_epochs_51.4_times_5.pkl',
-        'alpha_simulation_alpha_0.01_batch_100_draw_range_0.2_avg_epochs_54.0_times_5.pkl',
-        'alpha_simulation_alpha_0.02_batch_100_draw_range_0.2_avg_epochs_31.8_times_5.pkl',
-        'alpha_simulation_alpha_0.04_batch_100_draw_range_0.2_avg_epochs_24.4_times_5.pkl',
-        'alpha_simulation_alpha_0.08_batch_100_draw_range_0.2_avg_epochs_19.6_times_5.pkl',
+        'alpha_simulation_alpha_0.005_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_51.4_times_5.pkl',
+        'alpha_simulation_alpha_0.01_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_54.0_times_5.pkl',
+        'alpha_simulation_alpha_0.02_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_31.8_times_5.pkl',
+        'alpha_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+        # 'alpha_simulation_alpha_0.08_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_19.6_times_5.pkl',
         ],
     )
 
     draw_chart(
         param_name = 'batch_size',
         filenames=[
-        'batch_simulation_alpha_0.04_batch_25_draw_range_0.2_avg_epochs_25.8_times_5.pkl',
-        'batch_simulation_alpha_0.04_batch_50_draw_range_0.2_avg_epochs_23.2_times_5.pkl',
-        'batch_simulation_alpha_0.04_batch_100_draw_range_0.2_avg_epochs_24.4_times_5.pkl',
-        'batch_simulation_alpha_0.04_batch_200_draw_range_0.2_avg_epochs_24.2_times_5.pkl',
+        'batch_simulation_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_22.4_times_5.pkl',
+        'batch_simulation_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_25.8_times_5.pkl',
+        'batch_simulation_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+        'batch_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+        # 'batch_simulation_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
         ],
     )
 
@@ -94,7 +95,8 @@ if __name__ == "__main__":
         filenames=[
         'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_22.6_times_5.pkl',
         'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_20.6_times_5.pkl',
+        'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
         'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.0_times_5.pkl',
-        'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_31.2_times_5.pkl',
+        # 'hidden_neurones_simulation_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_31.2_times_5.pkl',
         ],
     )
