@@ -1,17 +1,21 @@
 import math
-import numpy as np
 
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 
-def activation_func_prim(x):
+def sigmoid_prim(x):
     sgm = sigmoid(x)
     return sgm * (1 - sgm)
 
 
-sigmoid_vectorize = np.vectorize(sigmoid)
-sigmoid_prim_vectorize = np.vectorize(activation_func_prim)
+def relu(x):
+    return max(x, 0)
 
-activation_func = sigmoid_vectorize
-activation_func_prim = np.vectorize(activation_func_prim)
+
+def relu_prim(x):
+    return 1 if x > 0 else 0
+
+
+SIGMOID = sigmoid, sigmoid_prim
+RELU = relu, relu_prim
