@@ -53,6 +53,7 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len //
                                                                            images_len_divider // batch_size)]
     print(batch_indexes)
+    elapsed_times = []
     worse_result_counter = 0
     epochs = 0
     with elapsed_timer() as timer:
@@ -97,9 +98,10 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
             print(epochs, ' result: ', test_accuracies[-1])
             print(epochs, ' validation_accuracies', validation_accuracies[-1])
             print(epochs, f'timer: {timer():.2f}')
+            elapsed_times.append(f'{timer():.2f}')
     print('final validation_accuracies', validation_accuracies)
     print(epochs, f'timer: {timer():.2f}')
-    return {'weights': weights, 'test_accuracies': test_accuracies, 'epochs': epochs}
+    return {'weights': weights, 'test_accuracies': test_accuracies, 'epochs': epochs, 'elapsed_times': elapsed_times}
 
 
 if __name__ == "__main__":
@@ -117,16 +119,18 @@ if __name__ == "__main__":
     #                             f'momentum_{momentum_param}_epochs_{epochs}.pkl')
 
     # np.random.seed(0)
-    alpha = 0.04
-    batch_size = 100
+    alpha = 0.003
+    batch_size = 10
     draw_range = 0.2
-    hidden_neurones = 100
-    worse_result_limit = 3
+    hidden_neurones = 50
+    worse_result_limit = 5
     momentum_param = 0
-    activation = SIGMOID
-    results = mlp(data=loaded_data, activation=activation, alpha=alpha, draw_range=draw_range, batch_size=batch_size, images_len_divider=1,
+    activation = RELU
+    results = mlp(data=loaded_data, activation=activation, alpha=alpha, draw_range=draw_range, batch_size=batch_size, images_len_divider=100,
                   hidden_neurones=hidden_neurones, momentum_param=momentum_param, worse_result_limit=worse_result_limit)
-    save(data=results, filename=f'once_{SIGMOID[0].__name__}_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
-                                 f'hidden_neurones_{hidden_neurones}_m_0.25.pkl')
+    print(results)
+    # save(data=results, filename=f'once_{activation[0].__name__}_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
+    #                              f'hidden_neurones_{hidden_neurones}.pkl')
+
 
     # print(activation_func.__name__)
