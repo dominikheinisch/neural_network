@@ -20,8 +20,8 @@ def calc_avg_duration(input):
         sub_list = list(map(lambda x: float(x), sub_list))
         differencies = [sub_list[0]] + [sub_list[i] - sub_list[i - 1] for i in range(1, len(sub_list))]
         alligned_differencies = differencies + [differencies[-1]] * (max_len - len(differencies))
-        differencies_acc = list(map(add, alligned_differencies, differencies_acc))
-    avg_differencies = [elem / len(input) for elem in differencies_acc]
+        differencies_acc = np.asarray(alligned_differencies) + np.asarray(differencies_acc)
+    avg_differencies = differencies_acc / len(input)
     return list(np.cumsum(avg_differencies))
 
 
@@ -87,7 +87,6 @@ def draw_chart(filenames, param_name):
     if all(d['avg_times'] for d in multiple_data):
         plot_param_to_time_for_many_results(multiple_data, param_name=param_name)
         plot_epoch_to_time_for_many_results(multiple_data, param_name=param_name)
-    # plot_param_to_epochs_for_many_results(data, param_name=param_name, is_log=True)
 
 
 def print_results(multiple_data, param_name):
