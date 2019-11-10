@@ -1,26 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from operator import add
 
 from loader.loader import load
 
 
-def set_plt_data(plt, title, names, xlabel='epochs'):
+def set_plt_data(plt, title, names, xlabel, ylabel='test data accuracy'):
     plt.title(title)
     plt.xlabel(xlabel)
-    plt.ylabel('test data accuracy')
+    plt.ylabel(ylabel)
     plt.legend(names, loc='lower right')
     plt.show()
 
 
-def calc_avg_times(elapsed_times):
-    max_len = max(len(sub_list) for sub_list in elapsed_times)
-    result_acc = [0] * max_len
-    divider_acc = [0] * max_len
-    for sub_list in elapsed_times:
-        for i in range(len(sub_list)):
-            result_acc[i] += float(sub_list[i])
-            divider_acc[i] += 1
-    return [result_acc[i] / divider_acc[i] for i in range(max_len)]
+def calc_avg_duration(input):
+    max_len = max(len(sub_list) for sub_list in input)
+    differencies_acc = [0] * max_len
+    for sub_list in input:
+        sub_list = list(map(lambda x: float(x), sub_list))
+        differencies = [sub_list[0]] + [sub_list[i] - sub_list[i - 1] for i in range(1, len(sub_list))]
+        alligned_differencies = differencies + [differencies[-1]] * (max_len - len(differencies))
+        differencies_acc = list(map(add, alligned_differencies, differencies_acc))
+    avg_differencies = [elem / len(input) for elem in differencies_acc]
+    return list(np.cumsum(avg_differencies))
 
 
 def prepare_avg_param(filename, param_name, ommit_first=True):
@@ -33,7 +35,7 @@ def prepare_avg_param(filename, param_name, ommit_first=True):
         avg_accuracies = avg_accuracies[1:]
         max_epoch -= 1
     elapsed_times = [d['elapsed_times'] if 'elapsed_times' in d else None for d in data['many_results']]
-    avg_times = calc_avg_times(elapsed_times) if all(elapsed_times) else None
+    avg_times = calc_avg_duration(elapsed_times) if all(elapsed_times) else None
     return {param_name: data[param_name], 'avg_accuracies': avg_accuracies, 'max_epoch': max_epoch,
             'activation': data['activation'] if 'activation' in data else '', 'avg_times': avg_times}
 
@@ -50,7 +52,7 @@ def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=Fals
     if is_log:
         plt.yscale('log')
     title=f'MLP\n{param_name}'
-    set_plt_data(plt, title, names)
+    set_plt_data(plt, title, names, xlabel='epochs')
 
 
 def plot_param_to_time_for_many_results(multiple_data, param_name):
@@ -69,12 +71,22 @@ def plot_param_to_time_for_many_results(multiple_data, param_name):
     set_plt_data(plt, title, names, xlabel='times [sec]')
 
 
+def plot_epoch_to_time_for_many_results(multiple_data, param_name):
+    names = []
+    for data_dict in multiple_data:
+        names.append(f'{data_dict["activation"]}, {data_dict[param_name]}')
+        plt.plot(data_dict['avg_times'], range(data_dict['max_epoch']))
+    title=f'MLP\n{param_name}'
+    set_plt_data(plt, title, names, xlabel='times [sec]', ylabel='epochs')
+
+
 def draw_chart(filenames, param_name):
     multiple_data = [prepare_avg_param(filename=f, param_name=param_name) for f in filenames]
     print_results(multiple_data, param_name=param_name)
     plot_param_to_epochs_for_many_results(multiple_data, param_name=param_name)
     if all(d['avg_times'] for d in multiple_data):
         plot_param_to_time_for_many_results(multiple_data, param_name=param_name)
+        plot_epoch_to_time_for_many_results(multiple_data, param_name=param_name)
     # plot_param_to_epochs_for_many_results(data, param_name=param_name, is_log=True)
 
 
@@ -111,25 +123,17 @@ if __name__ == "__main__":
     #     'alpha2_simulation_sigmoid_alpha_0.08_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_22.4_times_5.pkl',
     #     ],
     # )
-    # draw_chart(
-    #     param_name = 'batch_size',
-    #     filenames=[
-    #     'batch2_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
-    #     'batch2_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
-    #     'batch2_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
-    #     'batch2_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
-    #     'batch2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
-    #     'batch2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_9.2_times_5.pkl',
-    #     'batch2_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_13.6_times_5.pkl',
-    #     'batch2_simulation_relu_alpha_0.01_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_16.6_times_5.pkl',
-    #     # 'batch2_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
-    #     # 'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_22.4_times_5.pkl',
-    #     # 'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_25.8_times_5.pkl',
-    #     # 'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
-    #     # 'batch_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
-    #     # 'batch_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
-    #     ],
-    # )
+    draw_chart(
+        param_name = 'batch_size',
+        filenames=[
+        'batch2_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
+        ],
+    )
     draw_chart(
         param_name = 'hidden_neurones',
         filenames=[
@@ -137,39 +141,73 @@ if __name__ == "__main__":
         'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
         'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
         'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
+        'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_26.6_times_5.pkl',
+        ],
+    )
+
+
+    # sigmoid vs relu
+    draw_chart(
+        param_name = 'batch_size',
+        filenames=[
+        # 'batch2_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
+        # 'batch2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+
+        # 'batch4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_12.2_times_5.pkl',
+        'batch4_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_14.6_times_5.pkl',
+        'batch5_simulation_relu_alpha_0.01_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_15.2_times_5.pkl',
+        'batch4_simulation_relu_alpha_0.01_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_12.4_times_5.pkl',
+
+
+        # 'batch2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_9.2_times_5.pkl',
+        # 'batch2_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_13.6_times_5.pkl',
+        # 'batch2_simulation_relu_alpha_0.01_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_16.6_times_5.pkl',
+
+        # 'batch2_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
+        # 'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_22.4_times_5.pkl',
+        # 'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_25.8_times_5.pkl',
+        # 'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+        # 'batch_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+        # 'batch_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
+        ],
+    )
+
+    draw_chart(
+        param_name = 'hidden_neurones',
+        filenames=[
+        'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_17.8_times_5.pkl',
+        'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
+        'batch2_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
+        # 'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+        # 'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
         # 'hidden_neurones2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_26.6_times_5.pkl',
-        'hidden_neurones3_simulation_sigmoid_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_61.6_times_5.pkl',
-        'hidden_neurones3_simulation_sigmoid_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_54.8_times_5.pkl',
-        'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_12.2_times_5.pkl',
-        'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_10.6_times_5.pkl',
-        'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_17.2_times_5.pkl',
+        #
+        # 'hidden_neurones3_simulation_sigmoid_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_61.6_times_5.pkl',
+        # 'hidden_neurones3_simulation_sigmoid_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_54.8_times_5.pkl',
+
+        # 'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_12.2_times_5.pkl',
+        # 'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_10.6_times_5.pkl',
+        # 'hidden_neurones2_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_17.2_times_5.pkl',
+
+        'hidden_neurones4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_12.8_times_5.pkl',
+        'hidden_neurones4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_16.0_times_5.pkl',
+        'hidden_neurones4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_10.4_times_5.pkl',
+        # 'hidden_neurones4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_75_avg_epochs_10.8_times_5.pkl',
+
+        # 'hidden_neurones5_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_14.6_times_5.pkl',
+        # accuracy
+        # 'hidden_neurones6_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_13.2_times_5.pkl',
+
+
+
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_22.6_times_5.pkl',
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_20.6_times_5.pkl',
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.0_times_5.pkl',
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_31.2_times_5.pkl',
         # 'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_150_avg_epochs_38.0_times_2.pkl',
-        ],
-    )
-    draw_chart(
-        param_name = 'batch_size',
-        filenames=[
-        'batch_simulation_relu_alpha_0.01_batch_2_draw_range_0.2_hidden_neurones_50_avg_epochs_11.0_times_2.pkl',
-        'batch_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_13.6_times_5.pkl',
-        'batch_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_11.8_times_5.pkl',
-        'batch_simulation_relu_alpha_0.01_batch_20_draw_range_0.2_hidden_neurones_50_avg_epochs_11.6_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_22.4_times_5.pkl',
-        # move it
-        'alpha_simulation_relu_alpha_0.001_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_23.4_times_5.pkl',
-        'alpha2_simulation_relu_alpha_0.003_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_20.6_times_5.pkl',
-        ],
-    )
-
-    draw_chart(
-        param_name = 'batch_size',
-        filenames=[
-        # 'new_simulation_relu_alpha_0.003_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_15.5_times_2.pkl',
-        'batch2_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
-        'batch2_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
         ],
     )

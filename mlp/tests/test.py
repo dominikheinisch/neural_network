@@ -1,26 +1,28 @@
 import numpy as np
 
+from plotters.chart_plotter import calc_avg_duration
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
-from prediction.network import calc_prediction_accuracy, mlp_batch
+from prediction.activation_function import SIGMOID, RELU
+from prediction.network import calc_prediction_accuracy
 
-def test_calc_prediction_accuracy():
-    weights = load(filename='test_weights.pkl')
-    _, _, test_data = load_data_wrapper("../data")
-    te_in, te_out = test_data
-    random_weights = weights[0]
-    assert(calc_prediction_accuracy(*random_weights, te_in, te_out) == 0.0993)
-    calculated_weights = weights[3]
-    assert(calc_prediction_accuracy(*calculated_weights, te_in, te_out) == 0.7478)
+# def test_calc_prediction_accuracy():
+#     weights = load(filename='test_weights.pkl')
+#     _, _, test_data = load_data_wrapper("../data")
+#     te_in, te_out = test_data
+#     random_weights = weights[0]
+#     assert(calc_prediction_accuracy(SIGMOID[0], *random_weights, te_in, te_out) == 0.0993)
+#     calculated_weights = weights[3]
+#     assert(calc_prediction_accuracy(SIGMOID[0], *calculated_weights, te_in, te_out) == 0.7478)
 
 
-def test_mlp():
-    loaded_weights = load(filename='test_mlp_weights_bias_1_batch_1.pkl')
-    np.random.seed(0)
-    weights = mlp_batch(draw_range=0.2, batch_size=1, epochs=1, images_len_divider=10)
-    for (w11 , w12), (w21, w22) in zip(loaded_weights, weights):
-        assert(np.allclose(a=w11, b=w21))
-        assert (np.allclose(a=w12, b=w22))
+# def test_mlp():
+#     loaded_weights = load(filename='test_mlp_weights_bias_1_batch_1.pkl')
+#     np.random.seed(0)
+#     weights = mlp_batch(draw_range=0.2, batch_size=1, epochs=1, images_len_divider=10)
+#     for (w11 , w12), (w21, w22) in zip(loaded_weights, weights):
+#         assert(np.allclose(a=w11, b=w21))
+#         assert (np.allclose(a=w12, b=w22))
 
 
 def test_hidden_backprop():
@@ -74,9 +76,18 @@ def test_hidden_backprop_with_batch_2():
     assert (np.all(result == weights2_delta))
 
 
+def test_calc_avg_duration():
+    input = [['1', '2', '4'], ['1', '2', '3']]
+    assert(np.all([1, 2, 3.5] == calc_avg_duration(input)))
+    input = [['1', '2'], ['2', '4', '6', '11'], ['6']]
+    assert(np.all([3, 6, 9, 13] == calc_avg_duration(input)))
+
+
 if __name__ == "__main__":
-    test_calc_prediction_accuracy()
+    # test_calc_prediction_accuracy()
     test_hidden_backprop()
     test_hidden_backprop_with_batch()
     test_hidden_backprop_with_batch_2()
-    test_mlp()
+    # test_mlp()
+    test_calc_avg_duration()
+
