@@ -3,19 +3,19 @@ import numpy as np
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
 from saver.saver import save
-from prediction.network import calc_prediction_accuracy
+# from prediction.network import calc_prediction_accuracy
 from prediction.activation_function import SIGMOID, RELU
 from utils.timer import elapsed_timer
 
-def print_result(filename, test_data):
-    activation_func = np.vectorize(SIGMOID[0])
-    print(filename)
-    with elapsed_timer() as timer:
-        te_in, te_out = test_data
-        weights = load(filename=filename)['weights']
-        for i in range(len(weights)):
-            print(f'{i}   {calc_prediction_accuracy(activation_func, *weights[i], te_in, te_out)}')
-            print(f'timer: {timer():.2f}')
+# def print_result(filename, test_data):
+#     activation_func = np.vectorize(SIGMOID[0])
+#     print(filename)
+#     with elapsed_timer() as timer:
+#         te_in, te_out = test_data
+#         weights = load(filename=filename)['weights']
+#         for i in range(len(weights)):
+#             print(f'{i}   {calc_prediction_accuracy(activation_func, *weights[i], te_in, te_out)}')
+#             print(f'timer: {timer():.2f}')
 
 
 def prepare(filename):
@@ -84,15 +84,17 @@ if __name__ == "__main__":
 
     # print(load('once_relu_alpha_0.003_batch_10_draw_range_0.2_hidden_neurones_50.pkl'))
 
-    def calc_avg_times(input):
-        max_len = max(len(sub_list) for sub_list in input)
-        result_acc = [0] * max_len
-        divider_acc = [0] * max_len
-        for sub_list in input:
-            for i in range(len(sub_list)):
-                result_acc[i] += sub_list[i]
-                divider_acc[i] += 1
-        return [result_acc[i] / divider_acc[i] for i in range(max_len)]
+    print(load('hidden_neurones4_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_16.0_times_5.pkl'))
 
-    a = [[1, 3], [2, 4, 6, 9], [], [-1]]
-    print(calc_avg_times(a))
+    # def calc_avg_times(input):
+    #     max_len = max(len(sub_list) for sub_list in input)
+    #     result_acc = [0] * max_len
+    #     divider_acc = [0] * max_len
+    #     for sub_list in input:
+    #         for i in range(len(sub_list)):
+    #             result_acc[i] += sub_list[i]
+    #             divider_acc[i] += 1
+    #     return [result_acc[i] / divider_acc[i] for i in range(max_len)]
+    #
+    # a = [[1, 3], [2, 4, 6, 9], [], [-1]]
+    # print(calc_avg_times(a))
