@@ -2,7 +2,6 @@ import numpy as np
 
 from prediction.activation_function import SIGMOID, RELU
 from loader.mnist_loader import load_data_wrapper
-from saver.saver import save
 from utils.timer import elapsed_timer
 
 HIDDEN_BIAS = 1
@@ -25,8 +24,8 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
         images_len_divider=1):
     training_data, validation_data, test_data = data
     tr_in, tr_out = training_data
-    activation_func = np.vectorize(activation[0])
-    activation_func_prim = np.vectorize(activation[1])
+    activation_func = activation[0]
+    activation_func_prim = activation[1]
 
     images_len = tr_in.shape[0]
     assert(images_len % batch_size == 0)
@@ -52,7 +51,6 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
 
     batch_indexes = [(i * batch_size, (i + 1) * batch_size) for i in range(images_len //
                                                                            images_len_divider // batch_size)]
-    print(batch_indexes)
     elapsed_times = []
     worse_result_counter = 0
     epochs = 0
@@ -85,8 +83,6 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
                 weights1 = weights1 + weights1_delta #+ weights1_delta_prev * momentum_param
                 # weights1_delta_prev = weights1_delta
 
-                if batch_start % 10000 == 0:
-                    print(f'progress print: {batch_start}')
             epochs += 1
             weights.append([weights1, weights2])
             validation_accuracies.append(calc_prediction_accuracy(activation_func, weights1, weights2, *validation_data))
@@ -102,35 +98,3 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     print('final validation_accuracies', validation_accuracies)
     print(epochs, f'timer: {timer():.2f}')
     return {'weights': weights, 'test_accuracies': test_accuracies, 'epochs': epochs, 'elapsed_times': elapsed_times}
-
-
-if __name__ == "__main__":
-    loaded_data = load_data_wrapper("../data")
-
-    # alpha = 0.015 # for batch=1
-    # alpha = 0.007
-    # batch = 25
-    # momentum_param = 0.25
-    # epochs=20
-    # np.random.seed(0)
-    # results = mlp_batch(data=loaded_data, alpha=alpha, draw_range=0.2, batch_size=batch, epochs=epochs,
-    #                     images_len_divider=1, momentum_param=momentum_param)
-    # save(data=results, filename=f'test_weights_22_alpha_{alpha}_batch_{batch}activation_func_'
-    #                             f'momentum_{momentum_param}_epochs_{epochs}.pkl')
-
-    # np.random.seed(0)
-    alpha = 0.003
-    batch_size = 10
-    draw_range = 0.2
-    hidden_neurones = 50
-    worse_result_limit = 5
-    momentum_param = 0
-    activation = RELU
-    results = mlp(data=loaded_data, activation=activation, alpha=alpha, draw_range=draw_range, batch_size=batch_size, images_len_divider=100,
-                  hidden_neurones=hidden_neurones, momentum_param=momentum_param, worse_result_limit=worse_result_limit)
-    print(results)
-    # save(data=results, filename=f'once_{activation[0].__name__}_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
-    #                              f'hidden_neurones_{hidden_neurones}.pkl')
-
-
-    # print(activation_func.__name__)

@@ -1,7 +1,7 @@
-import math
+import numpy as np
 
 def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+    return 1 / (1 + np.exp(-x))
 
 
 def sigmoid_prim(x):
@@ -10,11 +10,12 @@ def sigmoid_prim(x):
 
 
 def relu(x):
-    return max(x, 0)
+    x[x < 0] = 0
+    return x
 
 
 def relu_prim(x):
-    return 1 if x > 0 else 0
+    return x > 0
 
 
 SIGMOID = sigmoid, sigmoid_prim
