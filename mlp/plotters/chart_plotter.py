@@ -100,78 +100,80 @@ def print_results(multiple_data, param_name):
     print(to_print)
 
 
-if __name__ == "__main__":
+def basic_simulations():
     draw_chart(
-        param_name = 'draw_range',
+        param_name='draw_range',
         filenames=[
-        'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
-        'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.4_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
-        'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.6_hidden_neurones_50_avg_epochs_25.0_times_5.pkl',
-        'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.8_hidden_neurones_50_avg_epochs_23.8_times_5.pkl',
-        'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_1.0_hidden_neurones_50_avg_epochs_27.6_times_5.pkl',
+            'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+            'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.4_hidden_neurones_50_avg_epochs_24.2_times_5.pkl',
+            'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.6_hidden_neurones_50_avg_epochs_25.0_times_5.pkl',
+            'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.8_hidden_neurones_50_avg_epochs_23.8_times_5.pkl',
+            'draw_range_simulation_sigmoid_alpha_0.04_batch_100_draw_range_1.0_hidden_neurones_50_avg_epochs_27.6_times_5.pkl',
         ],
     )
     draw_chart(
-        param_name = 'alpha',
+        param_name='alpha',
         filenames=[
-        'alpha_simulation_sigmoid_alpha_0.005_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_51.4_times_5.pkl',
-        'alpha_simulation_sigmoid_alpha_0.01_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_54.0_times_5.pkl',
-        'alpha_simulation_sigmoid_alpha_0.02_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_31.8_times_5.pkl',
-        'alpha_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
-        'alpha_simulation_sigmoid_alpha_0.08_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_19.6_times_5.pkl',
+            'alpha_simulation_sigmoid_alpha_0.005_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_51.4_times_5.pkl',
+            'alpha_simulation_sigmoid_alpha_0.01_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_54.0_times_5.pkl',
+            'alpha_simulation_sigmoid_alpha_0.02_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_31.8_times_5.pkl',
+            'alpha_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.4_times_5.pkl',
+            'alpha_simulation_sigmoid_alpha_0.08_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_19.6_times_5.pkl',
         ],
     )
     draw_chart(
-        param_name = 'batch_size',
+        param_name='batch_size',
         filenames=[
-        'batch_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_200_draw_range_0.2_hidden_neurones_50_avg_epochs_31.4_times_5.pkl',
         ],
     )
     draw_chart(
-        param_name = 'hidden_neurones',
+        param_name='hidden_neurones',
         filenames=[
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_17.8_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_26.6_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_17.8_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_100_avg_epochs_26.6_times_5.pkl',
         ],
     )
 
     # sigmoid vs relu
     draw_chart(
-        param_name = 'batch_size',
+        param_name='batch_size',
         filenames=[
-        'batch_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
-        'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_22.8_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_26.2_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
+            'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
 
-        'batch_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_12.2_times_5.pkl',
-        'batch_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_14.6_times_5.pkl',
-        'batch_simulation_relu_alpha_0.01_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_12.4_times_5.pkl',
+            'batch_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_12.2_times_5.pkl',
+            'batch_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_14.6_times_5.pkl',
+            'batch_simulation_relu_alpha_0.01_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_12.4_times_5.pkl',
         ],
     )
     draw_chart(
-        param_name = 'hidden_neurones',
+        param_name='hidden_neurones',
         filenames=[
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_17.8_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
-        'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_15_avg_epochs_17.8_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_25_avg_epochs_24.6_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_50_avg_epochs_24.0_times_5.pkl',
+            'hidden_neurones_simulation_sigmoid_alpha_0.04_batch_100_draw_range_0.2_hidden_neurones_75_avg_epochs_26.2_times_5.pkl',
 
-        'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_12.8_times_5.pkl',
-        'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_13.2_times_5.pkl',
-        'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_10.4_times_5.pkl',
-        'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_75_avg_epochs_10.8_times_5.pkl',
+            'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_15_avg_epochs_12.8_times_5.pkl',
+            'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_25_avg_epochs_13.2_times_5.pkl',
+            'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_10.4_times_5.pkl',
+            'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_75_avg_epochs_10.8_times_5.pkl',
         ],
     )
 
+
+def advanced_simulations():
     draw_chart(
         param_name = 'momentum_param',
         filenames=[
@@ -182,3 +184,8 @@ if __name__ == "__main__":
             'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_1.0_avg_epochs_22.0_reps_5.pkl',
         ],
     )
+
+
+if __name__ == "__main__":
+    # basic_simulations()
+    advanced_simulations()
