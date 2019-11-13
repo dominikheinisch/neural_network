@@ -171,3 +171,14 @@ if __name__ == "__main__":
         'hidden_neurones_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_75_avg_epochs_10.8_times_5.pkl',
         ],
     )
+
+    draw_chart(
+        param_name = 'momentum_param',
+        filenames=[
+            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_38.2_reps_5.pkl',
+            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.25_avg_epochs_27.4_reps_5.pkl',
+            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.5_avg_epochs_24.2_reps_5.pkl',
+            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.75_avg_epochs_23.0_reps_5.pkl',
+            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_1.0_avg_epochs_22.0_reps_5.pkl',
+        ],
+    )
