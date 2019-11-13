@@ -18,11 +18,6 @@ def get_simul_params(activation, alpha, batch_size, draw_range, hidden_neurones,
     }
 
 
-def run_once(func, params, **kwargs):
-    results = func(**params, **kwargs)
-    return {**results, **params}
-
-
 def run_many(times, func, params, **kwargs):
     many_results = []
     for t in range(times):
@@ -45,24 +40,42 @@ def run_simulation(name, data, times, params):
                                  f'avg_epochs_{many_res["avg_epochs"]}_times_{times}.pkl')
 
 
+def run_once(name, params, **kwargs):
+    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param = (params[p] for p in params)
+    result = mlp(**params, **kwargs)
+    print(result)
+    save(data=result, filename=f'{name}_once_{params["activation"][0].__name__}_alpha_{alpha}_batch_{batch_size}_'
+                                 f'draw_range_{draw_range}_hidden_neurones_{hidden_neurones}_'
+                                 f'test_accuracy_{result["test_accuracies"][-1 - worse_result_limit]}.pkl')
+
+
 if __name__ == "__main__":
     loaded_data = load_data_wrapper("../data")
+
+    # np.random.seed(1)
+    run_once(name='', data=loaded_data,
+             params=get_simul_params(activation=RELU, alpha=0.01, batch_size=10, draw_range=0.0001,
+                                     hidden_neurones=25, worse_result_limit=3, momentum_param=0))
+    run_once(name='', data=loaded_data,
+             params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=0.001,
+                                     hidden_neurones=25, worse_result_limit=2, momentum_param=0))
+
     # run_simulation(name='alpha2', data=loaded_data, times=2,
     #                params=get_simul_params(activation=RELU, alpha=0.003, batch_size=10, draw_range=0.2,
     #                                        hidden_neurones=50, worse_result_limit=5, momentum_param=0))
-    for batch_size in [5, 10, 25, 50]:
-        run_simulation(name='batch4', data=loaded_data, times=5,
-                       params=get_simul_params(activation=RELU, alpha=0.01, batch_size=batch_size, draw_range=0.2,
-                                               hidden_neurones=50, worse_result_limit=5, momentum_param=0))
+    # for batch_size in [5, 10, 25, 50]:
+    #     run_simulation(name='batch4', data=loaded_data, times=5,
+    #                    params=get_simul_params(activation=RELU, alpha=0.01, batch_size=batch_size, draw_range=0.2,
+    #                                            hidden_neurones=50, worse_result_limit=5, momentum_param=0))
 
     # for hidden_neurones in [15, 25, 75, 100, 150]:
     #     run_simulation(name='hidden_neurones2', data=loaded_data, times=5,
     #                    params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=0.2,
     #                                            hidden_neurones=hidden_neurones, worse_result_limit=2, momentum_param=0))
-    for hidden_neurones in [15, 25, 50, 75]:
-        run_simulation(name='hidden_neurones4', data=loaded_data, times=5,
-                       params=get_simul_params(activation=RELU, alpha=0.01, batch_size=5, draw_range=0.2,
-                                               hidden_neurones=hidden_neurones, worse_result_limit=5, momentum_param=0))
+    # for hidden_neurones in [15, 25, 50, 75]:
+    #     run_simulation(name='hidden_neurones4', data=loaded_data, times=5,
+    #                    params=get_simul_params(activation=RELU, alpha=0.01, batch_size=5, draw_range=0.2,
+    #                                            hidden_neurones=hidden_neurones, worse_result_limit=5, momentum_param=0))
 
     #
     # for alpha in [0.08, 0.02, 0.01, 0.005]:
@@ -74,11 +87,3 @@ if __name__ == "__main__":
     #     run_simulation(name='draw_range2', data=loaded_data, times=5,
     #                    params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=draw_range,
     #                                            hidden_neurones=50, worse_result_limit=2, momentum_param=0))
-
-
-
-    # # single_res = run_once(func=mlp, data=loaded_data, params=params, images_len_divider=50)
-    # # print(single_res)
-    # # save(data=mlp, filename=f'dummy_alpha_{alpha}_batch_{batch_size}_draw_range_{draw_range}_'
-    # #                         f'epochs_{single_res["epochs"]}_res_{single_res["accuracies"][-1 - worse_result_limit]}_'
-    # #                         f'momentum_param_{momentum_param}.pkl')
