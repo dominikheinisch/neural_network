@@ -1,4 +1,5 @@
 import numpy as np
+from collections import namedtuple
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -18,5 +19,8 @@ def relu_prim(x):
     return x > 0
 
 
-SIGMOID = sigmoid, sigmoid_prim
-RELU = relu, relu_prim
+Activation = namedtuple('Activation', ['activation', 'activation_prim'])
+
+
+SIGMOID = Activation(activation=sigmoid, activation_prim=sigmoid_prim)
+RELU = Activation(activation=relu, activation_prim=relu_prim)
