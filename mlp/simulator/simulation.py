@@ -6,8 +6,8 @@ from loader.mnist_loader import load_data_wrapper
 from saver.saver import save
 
 
-def get_simul_params(activation, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param,
-                     is_adagrad):
+def get_simul_params(activation, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param=0,
+                     is_adagrad=False):
     return {
         'activation': activation,
         'alpha': alpha,
@@ -34,7 +34,8 @@ def run_many(repeats, func, params, **kwargs):
 
 
 def run_simulation(name, data, repeats, params):
-    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param = (params[p] for p in params)
+    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, is_adagrad\
+        = (params[p] for p in params)
     many_res = run_many(repeats=repeats, func=mlp, data=data, params=params, images_len_divider=1)
     print(many_res)
     save(data=many_res, filename=f'{name}_simul_{many_res["activation"]}_alpha_{alpha}_batch_{batch_size}_'
@@ -45,7 +46,7 @@ def run_simulation(name, data, repeats, params):
 def run_once(name, params, **kwargs):
     _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, is_adagrad \
         = (params[p] for p in params)
-    result = mlp(**params, **kwargs, images_len_divider=200)
+    result = mlp(**params, **kwargs, images_len_divider=250)
     print(result)
     save(data=result, filename=f'{name}_once_{params["activation"].activation.__name__}_alpha_{alpha}_'
                                f'batch_{batch_size}_draw_range_{draw_range}_hidden_neurones_{hidden_neurones}_'
@@ -63,9 +64,9 @@ if __name__ == "__main__":
              params=get_simul_params(activation=SIGMOID, alpha=0.05, batch_size=100, draw_range=0.2,
                                      hidden_neurones=15, worse_result_limit=1, momentum_param=0.5, is_adagrad=False))
 
-    # run_simulation(name='alpha2', data=loaded_data, repeats=2,
+    # run_simulation(name='alpha2', data=loaded_data, repeats=1,
     #                params=get_simul_params(activation=RELU, alpha=0.003, batch_size=10, draw_range=0.2,
-    #                                        hidden_neurones=50, worse_result_limit=5, momentum_param=0))
+    #                                        hidden_neurones=50, worse_result_limit=2, momentum_param=0))
     # for batch_size in [5, 10, 25, 50]:
     #     run_simulation(name='batch2', data=loaded_data, repeats=2,
     #                    params=get_simul_params(activation=RELU, alpha=0.01, batch_size=batch_size, draw_range=0.01,
