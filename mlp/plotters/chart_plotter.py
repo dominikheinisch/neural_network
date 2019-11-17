@@ -152,9 +152,10 @@ def basic_simulations():
             'batch_simulation_sigmoid_alpha_0.04_batch_25_draw_range_0.2_hidden_neurones_50_avg_epochs_23.2_times_5.pkl',
             'batch_simulation_sigmoid_alpha_0.04_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_21.4_times_5.pkl',
 
-            'batch_simulation_relu_alpha_0.01_batch_5_draw_range_0.2_hidden_neurones_50_avg_epochs_12.2_times_5.pkl',
-            'batch_simulation_relu_alpha_0.01_batch_10_draw_range_0.2_hidden_neurones_50_avg_epochs_14.6_times_5.pkl',
-            'batch_simulation_relu_alpha_0.01_batch_50_draw_range_0.2_hidden_neurones_50_avg_epochs_12.4_times_5.pkl',
+            'batch2_simul_relu_alpha_0.01_batch_5_draw_r_0.01_hidden_n_50_mom_0_avg_epochs_12.0_reps_2.pkl',
+            'batch2_simul_relu_alpha_0.01_batch_10_draw_r_0.01_hidden_n_50_mom_0_avg_epochs_11.5_reps_2.pkl',
+            'batch2_simul_relu_alpha_0.01_batch_25_draw_r_0.01_hidden_n_50_mom_0_avg_epochs_13.5_reps_2.pkl',
+            'batch2_simul_relu_alpha_0.01_batch_50_draw_r_0.01_hidden_n_50_mom_0_avg_epochs_7.0_reps_2.pkl',
         ],
     )
     draw_chart(
@@ -182,6 +183,16 @@ def advanced_simulations():
             'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.5_avg_epochs_24.2_reps_5.pkl',
             'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.75_avg_epochs_23.0_reps_5.pkl',
             'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_1.0_avg_epochs_22.0_reps_5.pkl',
+        ],
+    )
+    draw_chart(
+        param_name = 'momentum_param',
+        filenames=[
+            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_43.4_reps_5.pkl',
+            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.25_avg_epochs_34.2_reps_5.pkl',
+            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.5_avg_epochs_32.8_reps_5.pkl',
+            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.75_avg_epochs_33.0_reps_5.pkl',
+            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_1.0_avg_epochs_33.2_reps_5.pkl',
         ],
     )
 
