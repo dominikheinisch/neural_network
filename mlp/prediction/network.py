@@ -17,6 +17,11 @@ def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test
     return np.sum(output_res == res) / output_res.shape[0]
 
 
+def draw_weights(draw_range, input_len, output_len):
+    return np.random.uniform(low=-draw_range, high=draw_range, size=(input_len * output_len)) \
+        .reshape((input_len, output_len))
+
+
 def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_result_limit=2, momentum_param=0,
         is_adagrad=False, images_len_divider=1):
     training_data, validation_data, test_data = data
@@ -25,13 +30,12 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
 
     images_len, input_data_len = tr_in.shape[0], tr_in.shape[1]
     hidden_neurones_size, output_neurones_size = hidden_neurones, tr_out.shape[1]
-    res_weights, validation_accuracies, test_accuracies = [], [], []
+    res_weights, validation_accuracies, test_accuracies, elapsed_times = [], [], [], []
 
-    weights_hidden = np.random.uniform(low=-draw_range, high=draw_range, size=(input_data_len * hidden_neurones_size))\
-        .reshape((input_data_len, hidden_neurones_size))
+    weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size)
     hidden_neurones_size = hidden_neurones_size + HIDDEN_BIAS
-    weights_output = np.random.uniform(low=-draw_range, high=draw_range, size=(hidden_neurones_size * output_neurones_size))\
-        .reshape((hidden_neurones_size, output_neurones_size))
+    weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size,
+                                  output_len=output_neurones_size)
 
     res_weights.append([weights_hidden, weights_output])
     validation_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *validation_data))
@@ -39,9 +43,7 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     test_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *test_data))
     print('result: ', test_accuracies[-1])
 
-    elapsed_times = []
-    worse_result_counter = 0
-    epochs = 0
+    epochs, worse_result_counter = 0, 0
     assert (images_len % batch_size == 0)
     split_len = images_len / batch_size
     with elapsed_timer() as timer:
