@@ -14,20 +14,13 @@ def load_data(data_path=DATA_PATH):
 
 def load_data_wrapper(data_path=DATA_PATH):
     tr_d, va_d, te_d = load_data(data_path)
-    training_inputs, validation_inputs, test_inputs = [prepare_input(data) for data in [tr_d[0], va_d[0], te_d[0]]]
+    training_inputs, validation_inputs, test_inputs = tr_d[0], va_d[0], te_d[0]
     training_results, validation_results, test_results = [vectorize_results(data)
                                                           for data in [tr_d[1], va_d[1], te_d[1]]]
-    validation_data = (validation_inputs, validation_results)
-    training_data = (training_inputs, training_results)
-    test_data = (test_inputs, test_results)
+    validation_data = validation_inputs, validation_results
+    training_data = training_inputs, training_results
+    test_data = test_inputs, test_results
     return training_data, validation_data, test_data
-
-
-def prepare_input(input):
-    res = np.zeros(shape=(input.shape[0], input.shape[1] + 1))
-    res[:, 0] = 1
-    res[:, 1:] = input
-    return res
 
 
 def vectorize_results(output):

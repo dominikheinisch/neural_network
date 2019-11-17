@@ -6,7 +6,11 @@ BIAS_SIZE = 1
 
 
 def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test_input, test_output):
-    net_hidden = test_input @ hidden_weight
+    test_input_with_bias = np.ones(shape=(test_input.shape[0], test_input.shape[1] + BIAS_SIZE))
+    test_input_with_bias[:, BIAS_SIZE:] = test_input
+    # print(test_input_with_bias.shape)
+    # print(hidden_weight.shape)
+    net_hidden = test_input_with_bias @ hidden_weight
     hidden_with_bias = np.ones(shape=(net_hidden.shape[0], net_hidden.shape[1] + BIAS_SIZE))
     hidden_with_bias[:, BIAS_SIZE:] = activation_func(net_hidden)
     net_output = hidden_with_bias @ output_weight
@@ -30,64 +34,64 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     images_len, input_data_len = tr_in.shape[0], tr_in.shape[1]
     hidden_neurones_size, output_neurones_size = hidden_neurones, tr_out.shape[1]
 
+    input_data_len = input_data_len + BIAS_SIZE
     weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size)
     hidden_neurones_size = hidden_neurones_size + BIAS_SIZE
     weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size,
                                   output_len=output_neurones_size)
 
     res_weights, validation_accuracies, test_accuracies, elapsed_times = [], [], [], []
-
-    res_weights.append([weights_hidden, weights_output])
-    validation_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *validation_data))
-    print('validation_accuracies: ', validation_accuracies[-1])
-    test_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *test_data))
-    print('result: ', test_accuracies[-1])
-
     epochs, worse_result_counter = 0, 0
     assert (images_len % batch_size == 0)
     split_len = images_len / batch_size
     with elapsed_timer() as timer:
         while worse_result_counter < worse_result_limit:
-            weights1_delta_prev, weights2_delta_prev = 0, 0
-            for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
-                net_hidden = tr_in_batched @ weights_hidden
-                hidden = activation_func(net_hidden)
-                hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + BIAS_SIZE))
-                hidden_with_bias[:, BIAS_SIZE:] = hidden
-
-                net_output = hidden_with_bias @ weights_output
-                output = activation_func(net_output)
-
-                err_out = (tr_out_batched - output) * activation_func_prim(net_output)
-                err_hidden = err_out @ weights_output[BIAS_SIZE:, :].transpose() * activation_func_prim(net_hidden)
-
-                current_alpha = alpha
-                if is_adagrad:
-                    current_alpha = alpha * 1e-8
-
-
-                weights2_delta = np.transpose(np.tile(hidden_with_bias, reps=(err_out.shape[1], 1, 1))) * err_out
-                weights2_delta = np.sum(weights2_delta, axis=1) * current_alpha
-                weights_output = weights_output + weights2_delta + weights2_delta_prev  * momentum_param
-                weights2_delta_prev = weights2_delta
-
-                weights1_delta = np.transpose(np.tile(tr_in_batched, reps=(err_hidden.shape[1], 1, 1))) * err_hidden
-                weights1_delta = np.sum(weights1_delta, axis=1) * current_alpha
-                weights_hidden = weights_hidden + weights1_delta + weights1_delta_prev * momentum_param
-                weights1_delta_prev = weights1_delta
-
-            epochs += 1
             res_weights.append([weights_hidden, weights_output])
             validation_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *validation_data))
-            if validation_accuracies[-1] > validation_accuracies[-2 - worse_result_counter]:
+            if len(validation_accuracies) == 1:
+                pass
+            elif validation_accuracies[-1] > validation_accuracies[-2 - worse_result_counter]:
                 worse_result_counter = 0
             else:
                 worse_result_counter +=1
             test_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *test_data))
             print(epochs, ' result: ', test_accuracies[-1])
             print(epochs, ' validation_accuracies', validation_accuracies[-1])
-            print(epochs, f'timer: {timer():.2f}')
-            elapsed_times.append(f'{timer():.2f}')
+
+            if worse_result_counter < worse_result_limit:
+                weights1_delta_prev, weights2_delta_prev = 0, 0
+                for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
+                    tr_in_with_bias = np.ones(shape=(tr_in_batched.shape[0], tr_in_batched.shape[1] + BIAS_SIZE))
+                    tr_in_with_bias[:, BIAS_SIZE:] = tr_in_batched
+                    net_hidden = tr_in_with_bias @ weights_hidden
+
+                    hidden = activation_func(net_hidden)
+                    hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + BIAS_SIZE))
+                    hidden_with_bias[:, BIAS_SIZE:] = hidden
+
+                    net_output = hidden_with_bias @ weights_output
+                    output = activation_func(net_output)
+
+                    err_out = (tr_out_batched - output) * activation_func_prim(net_output)
+                    err_hidden = err_out @ weights_output[BIAS_SIZE:, :].transpose() * activation_func_prim(net_hidden)
+
+                    current_alpha = alpha
+                    if is_adagrad:
+                        current_alpha = alpha * 1e-8
+
+
+                    weights2_delta = np.transpose(np.tile(hidden_with_bias, reps=(err_out.shape[1], 1, 1))) * err_out
+                    weights2_delta = np.sum(weights2_delta, axis=1) * current_alpha
+                    weights_output = weights_output + weights2_delta + weights2_delta_prev  * momentum_param
+                    weights2_delta_prev = weights2_delta
+
+                    weights1_delta = np.transpose(np.tile(tr_in_with_bias, reps=(err_hidden.shape[1], 1, 1))) * err_hidden
+                    weights1_delta = np.sum(weights1_delta, axis=1) * current_alpha
+                    weights_hidden = weights_hidden + weights1_delta + weights1_delta_prev * momentum_param
+                    weights1_delta_prev = weights1_delta
+                print(epochs, f'timer: {timer():.2f}')
+                elapsed_times.append(f'{timer():.2f}')
+                epochs += 1
     print('final validation_accuracies', validation_accuracies)
     print(epochs, f'timer: {timer():.2f}')
     return {'weights': res_weights, 'test_accuracies': test_accuracies, 'epochs': epochs, 'elapsed_times': elapsed_times}
