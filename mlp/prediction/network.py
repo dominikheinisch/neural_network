@@ -2,17 +2,16 @@ import numpy as np
 
 from utils.timer import elapsed_timer
 
-HIDDEN_BIAS = 1
+BIAS_SIZE = 1
 
 
 def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test_input, test_output):
     net_hidden = test_input @ hidden_weight
-    hidden_with_bias = np.ones(shape=(net_hidden.shape[0], net_hidden.shape[1] + HIDDEN_BIAS))
-    hidden_with_bias[:, HIDDEN_BIAS:] = activation_func(net_hidden)
+    hidden_with_bias = np.ones(shape=(net_hidden.shape[0], net_hidden.shape[1] + BIAS_SIZE))
+    hidden_with_bias[:, BIAS_SIZE:] = activation_func(net_hidden)
     net_output = hidden_with_bias @ output_weight
     output = activation_func(net_output)
-    res = output
-    res = np.argmax(res, axis=1)
+    res = np.argmax(output, axis=1)
     output_res = np.argmax(test_output, axis=1)
     return np.sum(output_res == res) / output_res.shape[0]
 
@@ -30,12 +29,13 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
 
     images_len, input_data_len = tr_in.shape[0], tr_in.shape[1]
     hidden_neurones_size, output_neurones_size = hidden_neurones, tr_out.shape[1]
-    res_weights, validation_accuracies, test_accuracies, elapsed_times = [], [], [], []
 
     weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size)
-    hidden_neurones_size = hidden_neurones_size + HIDDEN_BIAS
+    hidden_neurones_size = hidden_neurones_size + BIAS_SIZE
     weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size,
                                   output_len=output_neurones_size)
+
+    res_weights, validation_accuracies, test_accuracies, elapsed_times = [], [], [], []
 
     res_weights.append([weights_hidden, weights_output])
     validation_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *validation_data))
@@ -48,19 +48,18 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     split_len = images_len / batch_size
     with elapsed_timer() as timer:
         while worse_result_counter < worse_result_limit:
-            weights1_delta_prev = 0
-            weights2_delta_prev = 0
+            weights1_delta_prev, weights2_delta_prev = 0, 0
             for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
                 net_hidden = tr_in_batched @ weights_hidden
                 hidden = activation_func(net_hidden)
-                hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + HIDDEN_BIAS))
-                hidden_with_bias[:, HIDDEN_BIAS:] = hidden
+                hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + BIAS_SIZE))
+                hidden_with_bias[:, BIAS_SIZE:] = hidden
 
                 net_output = hidden_with_bias @ weights_output
                 output = activation_func(net_output)
 
                 err_out = (tr_out_batched - output) * activation_func_prim(net_output)
-                err_hidden = err_out @ weights_output[HIDDEN_BIAS:, :].transpose() * activation_func_prim(net_hidden)
+                err_hidden = err_out @ weights_output[BIAS_SIZE:, :].transpose() * activation_func_prim(net_hidden)
 
                 current_alpha = alpha
                 if is_adagrad:
