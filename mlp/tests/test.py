@@ -27,6 +27,7 @@ def test_mlp():
     for (w11 , w12), (w21, w22) in zip(loaded_result['weights'], result['weights']):
         assert(np.allclose(a=w11, b=w21))
         assert(np.allclose(a=w12, b=w22))
+    assert (len(loaded_result['weights']) == len(result['weights']))
 
 
 def test_hidden_backprop():
