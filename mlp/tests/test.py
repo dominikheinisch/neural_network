@@ -4,12 +4,13 @@ from plotters.chart_plotter import calc_avg_duration
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
 from prediction.activation_function import SIGMOID, RELU
-from prediction.network import calc_prediction_accuracy, mlp
+from prediction.network import add_bias, calc_prediction_accuracy, mlp
 
 def test_calc_prediction_accuracy():
     loaded_weights = load(filename='test_once_sigmoid_alpha_0.04_batch_100_draw_range_0.001_hidden_neurones_50_'
                                    'test_accuracy_0.968.pkl')['weights']
     _, _, test_data = load_data_wrapper("../data")
+    test_data = add_bias(data=test_data)
     te_in, te_out = test_data
     weights_tested = loaded_weights[0]
     assert(calc_prediction_accuracy(SIGMOID.activation, *weights_tested, te_in, te_out) == 0.101)

@@ -6,11 +6,7 @@ BIAS_SIZE = 1
 
 
 def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test_input, test_output):
-    test_input_with_bias = np.ones(shape=(test_input.shape[0], test_input.shape[1] + BIAS_SIZE))
-    test_input_with_bias[:, BIAS_SIZE:] = test_input
-    # print(test_input_with_bias.shape)
-    # print(hidden_weight.shape)
-    net_hidden = test_input_with_bias @ hidden_weight
+    net_hidden = test_input @ hidden_weight
     hidden_with_bias = np.ones(shape=(net_hidden.shape[0], net_hidden.shape[1] + BIAS_SIZE))
     hidden_with_bias[:, BIAS_SIZE:] = activation_func(net_hidden)
     net_output = hidden_with_bias @ output_weight
@@ -20,6 +16,10 @@ def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test
     return np.sum(output_res == res) / output_res.shape[0]
 
 
+def add_bias(data):
+    return np.append(np.ones(shape=(data[0].shape[0], BIAS_SIZE)), data[0], axis=1), data[1]
+
+
 def draw_weights(draw_range, input_len, output_len):
     return np.random.uniform(low=-draw_range, high=draw_range, size=(input_len * output_len)) \
         .reshape((input_len, output_len))
@@ -27,14 +27,13 @@ def draw_weights(draw_range, input_len, output_len):
 
 def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_result_limit=2, momentum_param=0,
         is_adagrad=False, images_len_divider=1):
-    training_data, validation_data, test_data = data
-    tr_in, tr_out = (data[0: len(data) // images_len_divider] for data in training_data)
+    training_data, validation_data, test_data = [add_bias(d) for d in data]
+    tr_in, tr_out = (data[: len(data) // images_len_divider] for data in training_data)
     activation_func, activation_func_prim = activation.activation, activation.activation_prim
 
     images_len, input_data_len = tr_in.shape[0], tr_in.shape[1]
     hidden_neurones_size, output_neurones_size = hidden_neurones, tr_out.shape[1]
 
-    input_data_len = input_data_len + BIAS_SIZE
     weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size)
     hidden_neurones_size = hidden_neurones_size + BIAS_SIZE
     weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size,
@@ -61,8 +60,7 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
             if worse_result_counter < worse_result_limit:
                 weights1_delta_prev, weights2_delta_prev = 0, 0
                 for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
-                    tr_in_with_bias = np.ones(shape=(tr_in_batched.shape[0], tr_in_batched.shape[1] + BIAS_SIZE))
-                    tr_in_with_bias[:, BIAS_SIZE:] = tr_in_batched
+                    tr_in_with_bias = tr_in_batched
                     net_hidden = tr_in_with_bias @ weights_hidden
 
                     hidden = activation_func(net_hidden)
