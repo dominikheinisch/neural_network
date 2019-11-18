@@ -25,6 +25,14 @@ def draw_weights(draw_range, input_len, output_len):
         .reshape((input_len, output_len))
 
 
+def calc_delta(neurone_with_bias, error, current_alpha, delta_prev, momentum_param):
+    temp = np.transpose(np.tile(neurone_with_bias, reps=(error.shape[1], 1, 1))) * error
+    delta = np.sum(temp, axis=1) * current_alpha
+    result = delta + delta_prev * momentum_param
+    delta_prev[:] = delta
+    return result
+
+
 def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_result_limit=2, momentum_param=0,
         is_adagrad=False, images_len_divider=1):
     training_data, validation_data, test_data = [add_bias(d) for d in data]
@@ -58,7 +66,7 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
             print(epochs, ' validation_accuracies', validation_accuracies[-1])
 
             if worse_result_counter < worse_result_limit:
-                weights1_delta_prev, weights2_delta_prev = 0, 0
+                weights1_delta_prev, weights2_delta_prev = np.zeros(shape=(weights_hidden.shape)), np.zeros(shape=(weights_output.shape))
                 for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
                     tr_in_with_bias = tr_in_batched
                     net_hidden = tr_in_with_bias @ weights_hidden
@@ -77,16 +85,8 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
                     if is_adagrad:
                         current_alpha = alpha * 1e-8
 
-
-                    weights2_delta = np.transpose(np.tile(hidden_with_bias, reps=(err_out.shape[1], 1, 1))) * err_out
-                    weights2_delta = np.sum(weights2_delta, axis=1) * current_alpha
-                    weights_output = weights_output + weights2_delta + weights2_delta_prev  * momentum_param
-                    weights2_delta_prev = weights2_delta
-
-                    weights1_delta = np.transpose(np.tile(tr_in_with_bias, reps=(err_hidden.shape[1], 1, 1))) * err_hidden
-                    weights1_delta = np.sum(weights1_delta, axis=1) * current_alpha
-                    weights_hidden = weights_hidden + weights1_delta + weights1_delta_prev * momentum_param
-                    weights1_delta_prev = weights1_delta
+                    weights_output = weights_output + calc_delta(hidden_with_bias, err_out, current_alpha, weights2_delta_prev, momentum_param)
+                    weights_hidden = weights_hidden + calc_delta(tr_in_with_bias, err_hidden, current_alpha, weights1_delta_prev, momentum_param)
                 print(epochs, f'timer: {timer():.2f}')
                 elapsed_times.append(f'{timer():.2f}')
                 epochs += 1
