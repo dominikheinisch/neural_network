@@ -5,10 +5,15 @@ from utils.timer import elapsed_timer
 BIAS_SIZE = 1
 
 
+def activate_with_bias(net, activation_func):
+    activated_with_bias = np.ones(shape=(net.shape[0], net.shape[1] + BIAS_SIZE))
+    activated_with_bias[:, BIAS_SIZE:] = activation_func(net)
+    return activated_with_bias
+
+
 def calc_prediction_accuracy(activation_func, hidden_weight, output_weight, test_input, test_output):
     net_hidden = test_input @ hidden_weight
-    hidden_with_bias = np.ones(shape=(net_hidden.shape[0], net_hidden.shape[1] + BIAS_SIZE))
-    hidden_with_bias[:, BIAS_SIZE:] = activation_func(net_hidden)
+    hidden_with_bias = activate_with_bias(net_hidden, activation_func)
     net_output = hidden_with_bias @ output_weight
     output = activation_func(net_output)
     res = np.argmax(output, axis=1)
@@ -68,12 +73,8 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
             if worse_result_counter < worse_result_limit:
                 weights1_delta_prev, weights2_delta_prev = np.zeros(shape=(weights_hidden.shape)), np.zeros(shape=(weights_output.shape))
                 for tr_in_batched, tr_out_batched in zip(np.split(tr_in, split_len), np.split(tr_out, split_len)):
-                    tr_in_with_bias = tr_in_batched
-                    net_hidden = tr_in_with_bias @ weights_hidden
-
-                    hidden = activation_func(net_hidden)
-                    hidden_with_bias = np.ones(shape=(hidden.shape[0], hidden.shape[1] + BIAS_SIZE))
-                    hidden_with_bias[:, BIAS_SIZE:] = hidden
+                    net_hidden = tr_in_batched @ weights_hidden
+                    hidden_with_bias = activate_with_bias(net_hidden, activation_func)
 
                     net_output = hidden_with_bias @ weights_output
                     output = activation_func(net_output)
@@ -86,7 +87,7 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
                         current_alpha = alpha * 1e-8
 
                     weights_output = weights_output + calc_delta(hidden_with_bias, err_out, current_alpha, weights2_delta_prev, momentum_param)
-                    weights_hidden = weights_hidden + calc_delta(tr_in_with_bias, err_hidden, current_alpha, weights1_delta_prev, momentum_param)
+                    weights_hidden = weights_hidden + calc_delta(tr_in_batched, err_hidden, current_alpha, weights1_delta_prev, momentum_param)
                 print(epochs, f'timer: {timer():.2f}')
                 elapsed_times.append(f'{timer():.2f}')
                 epochs += 1
