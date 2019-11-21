@@ -37,13 +37,16 @@ def prepare_avg_param(filename, param_name, ommit_first=True):
     elapsed_times = [d['elapsed_times'] if 'elapsed_times' in d else None for d in data['many_results']]
     avg_times = calc_avg_duration(elapsed_times) if all(elapsed_times) else None
     return {param_name: data[param_name], 'avg_accuracies': avg_accuracies, 'max_epoch': max_epoch,
-            'activation': data['activation'] if 'activation' in data else '', 'avg_times': avg_times}
+            'activation': data['activation'] if 'activation' in data else '', 'avg_times': avg_times,
+            'use_adagrad': data['use_adagrad'] if 'use_adagrad' in data else False}
 
 
 def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=False):
     names = []
     for data_dict in multiple_data:
         names.append(data_dict['activation'] + ', ')
+        if data_dict['use_adagrad']:
+            names[-1] += 'adagrad, '
         if param_name == 'draw_range':
             names[-1] += str(f'-{data_dict[param_name]}:{data_dict[param_name]}')
         else:
@@ -58,10 +61,7 @@ def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=Fals
 def plot_param_to_time_for_many_results(multiple_data, param_name):
     names = []
     for data_dict in multiple_data:
-        if 'activation' in data_dict:
-            names.append(data_dict['activation'] + ', ')
-        else:
-            names.append('')
+        names.append(f'{data_dict["activation"]}, {data_dict[param_name]}')
         if param_name == 'draw_range':
             names[-1] += str(f'-{data_dict[param_name]}:{data_dict[param_name]}')
         else:
@@ -201,16 +201,16 @@ def advanced_simulations():
             'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_1.0_avg_epochs_22.0_reps_5.pkl',
         ],
     )
-    draw_chart(
-        param_name = 'momentum_param',
-        filenames=[
-            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_43.4_reps_5.pkl',
-            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.25_avg_epochs_34.2_reps_5.pkl',
-            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.5_avg_epochs_32.8_reps_5.pkl',
-            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.75_avg_epochs_33.0_reps_5.pkl',
-            'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_1.0_avg_epochs_33.2_reps_5.pkl',
-        ],
-    )
+    # draw_chart(
+    #     param_name = 'momentum_param',
+    #     filenames=[
+    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_43.4_reps_5.pkl',
+    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.25_avg_epochs_34.2_reps_5.pkl',
+    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.5_avg_epochs_32.8_reps_5.pkl',
+    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.75_avg_epochs_33.0_reps_5.pkl',
+    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_1.0_avg_epochs_33.2_reps_5.pkl',
+    #     ],
+    # )
 
 
 if __name__ == "__main__":
