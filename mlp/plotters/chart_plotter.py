@@ -68,7 +68,7 @@ def plot_param_to_time_for_many_results(multiple_data, param_name):
             names[-1] += str(data_dict[param_name])
         plt.plot(data_dict['avg_times'], data_dict['avg_accuracies'])
     title=f'MLP\n{param_name}'
-    set_plt_data(plt, title, names, xlabel='times [sec]')
+    set_plt_data(plt, title, names, xlabel='time [sec]')
 
 
 def plot_epoch_to_time_for_many_results(multiple_data, param_name):
@@ -77,7 +77,7 @@ def plot_epoch_to_time_for_many_results(multiple_data, param_name):
         names.append(f'{data_dict["activation"]}, {data_dict[param_name]}')
         plt.plot(data_dict['avg_times'], range(data_dict['max_epoch']))
     title=f'MLP\n{param_name}'
-    set_plt_data(plt, title, names, xlabel='times [sec]', ylabel='epochs')
+    set_plt_data(plt, title, names, xlabel='time [sec]', ylabel='epochs')
 
 
 def draw_chart(filenames, param_name):
@@ -175,6 +175,22 @@ def basic_simulations():
 
 
 def advanced_simulations():
+    # adagrad
+    draw_chart(
+        param_name='alpha',
+        filenames=[
+            'alpha__simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_48.75_reps_4.pkl',
+            'alpha__simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_48.25_reps_4.pkl',
+            'alpha__simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_29.25_reps_4.pkl',
+
+            'alpha_adagrad_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_92.25_reps_4.pkl',
+            'alpha_adagrad_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_83.25_reps_4.pkl',
+            'alpha_adagrad_simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_46.25_reps_4.pkl',
+            'alpha_adagrad_simul_sigmoid_alpha_0.1_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_36.25_reps_4.pkl',
+            'alpha_adagrad_simul_sigmoid_alpha_0.25_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_85.75_reps_4.pkl',
+        ],
+    )
+
     draw_chart(
         param_name = 'momentum_param',
         filenames=[

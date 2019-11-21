@@ -24,7 +24,7 @@ def test_mlp():
                                    'accuracy_0.7321.pkl')
     np.random.seed(0)
     result = mlp(data=loaded_data, activation=SIGMOID, alpha=0.05, batch_size=100, draw_range=0.2,
-                 hidden_neurones=15, worse_result_limit=1, momentum_param=0.5, is_adagrad=False, images_len_divider=250)
+                 hidden_neurones=15, worse_result_limit=1, momentum_param=0.5, use_adagrad=False, images_len_divider=250)
     for (w11 , w12), (w21, w22) in zip(loaded_result['weights'], result['weights']):
         assert(np.allclose(a=w11, b=w21))
         assert(np.allclose(a=w12, b=w22))
