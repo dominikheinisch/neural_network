@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from operator import add
 
 from loader.loader import load
 
@@ -10,6 +9,10 @@ def set_plt_data(plt, title, names, xlabel, ylabel='test data accuracy'):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.legend(names, loc='lower right')
+    # # TODO
+    # locs, _ = plt.xticks()
+    # plt.xticks([5] + locs)
+    # print(locs)
     plt.show()
 
 
@@ -32,26 +35,32 @@ def prepare_avg_param(filename, param_name, ommit_first=True):
     alligned_many_accuracies = [elem + [elem[-1]] * (max_epoch - len(elem)) for elem in many_accuracies]
     avg_accuracies = np.asarray(alligned_many_accuracies).sum(axis=0) / len(alligned_many_accuracies)
     if ommit_first:
-        avg_accuracies = avg_accuracies[1:]
+        # TODO
+        avg_accuracies = avg_accuracies[1:].round(4)
         max_epoch -= 1
     elapsed_times = [d['elapsed_times'] if 'elapsed_times' in d else None for d in data['many_results']]
     avg_times = calc_avg_duration(elapsed_times) if all(elapsed_times) else None
     return {param_name: data[param_name], 'avg_accuracies': avg_accuracies, 'max_epoch': max_epoch,
             'activation': data['activation'] if 'activation' in data else '', 'avg_times': avg_times,
-            'use_adagrad': data['use_adagrad'] if 'use_adagrad' in data else False}
+            'use_adagrad': data['use_adagrad'] if 'use_adagrad' in data else False,
+            'draw_type': data['draw_type'] if 'draw_type' in data else 'uniform',
+            'momentum_param': data['momentum_param']}
 
 
-def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=False):
+def plot_param_to_epochs_for_many_results(multiple_data, param_name, print_draw_type=False, is_log=False):
     names = []
     for data_dict in multiple_data:
         names.append(data_dict['activation'] + ', ')
         if data_dict['use_adagrad']:
             names[-1] += 'adagrad, '
+        if print_draw_type:
+            names[-1] += f'''{data_dict['draw_type']}, '''
         if param_name == 'draw_range':
             names[-1] += str(f'-{data_dict[param_name]}:{data_dict[param_name]}')
         else:
             names[-1] += str(data_dict[param_name])
-        plt.plot(range(data_dict['max_epoch']), data_dict['avg_accuracies'])
+        # TODO
+        plt.plot(range(0, data_dict['max_epoch']), data_dict['avg_accuracies'])
     if is_log:
         plt.yscale('log')
     title=f'MLP\n{param_name}'
@@ -61,7 +70,7 @@ def plot_param_to_epochs_for_many_results(multiple_data, param_name, is_log=Fals
 def plot_param_to_time_for_many_results(multiple_data, param_name):
     names = []
     for data_dict in multiple_data:
-        names.append(f'{data_dict["activation"]}, {data_dict[param_name]}')
+        names.append(f'{data_dict["activation"]}, ')
         if param_name == 'draw_range':
             names[-1] += str(f'-{data_dict[param_name]}:{data_dict[param_name]}')
         else:
@@ -74,16 +83,19 @@ def plot_param_to_time_for_many_results(multiple_data, param_name):
 def plot_epoch_to_time_for_many_results(multiple_data, param_name):
     names = []
     for data_dict in multiple_data:
-        names.append(f'{data_dict["activation"]}, {data_dict[param_name]}')
+        names.append(data_dict["activation"] + ', ')
+        if data_dict['use_adagrad']:
+            names[-1] += 'adagrad, '
+        names[-1] += str(data_dict[param_name])
         plt.plot(data_dict['avg_times'], range(data_dict['max_epoch']))
     title=f'MLP\n{param_name}'
     set_plt_data(plt, title, names, xlabel='time [sec]', ylabel='epochs')
 
 
-def draw_chart(filenames, param_name):
+def draw_chart(filenames, param_name, print_draw_type=False):
     multiple_data = [prepare_avg_param(filename=f, param_name=param_name) for f in filenames]
     print_results(multiple_data, param_name=param_name)
-    plot_param_to_epochs_for_many_results(multiple_data, param_name=param_name)
+    plot_param_to_epochs_for_many_results(multiple_data, param_name=param_name, print_draw_type=print_draw_type)
     if all(d['avg_times'] for d in multiple_data):
         plot_param_to_time_for_many_results(multiple_data, param_name=param_name)
         plot_epoch_to_time_for_many_results(multiple_data, param_name=param_name)
@@ -95,7 +107,7 @@ def print_results(multiple_data, param_name):
     print([data[param_name] for data in multiple_data])
     to_print = np.ones(shape=(max_size, len(multiple_data))) * -1
     for i in range(len(multiple_data)):
-        data = multiple_data[i]['avg_accuracies']
+        data = multiple_data[i]['avg_accuracies'].round(4)
         to_print[0:len(data), i] = data
     print(to_print)
 
@@ -175,44 +187,59 @@ def basic_simulations():
 
 
 def advanced_simulations():
+    draw_chart(
+        param_name='draw_range',
+        print_draw_type=True,
+        filenames=[
+            'draw_range___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_35.0_reps_4.pkl',
+            'draw_range___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.6_hidden_n_50_mom_0_avg_epochs_33.0_reps_4.pkl',
+            'draw_range___simul_sigmoid_alpha_0.04_batch_100_draw_r_1.0_hidden_n_50_mom_0_avg_epochs_35.5_reps_4.pkl',
+            'he_normal___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_33.75_reps_4.pkl',
+            'he_normal___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.6_hidden_n_50_mom_0_avg_epochs_34.75_reps_4.pkl',
+            'he_normal___simul_sigmoid_alpha_0.04_batch_100_draw_r_1.0_hidden_n_50_mom_0_avg_epochs_35.0_reps_4.pkl',
+            'xavier___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_38.25_reps_4.pkl',
+            'xavier___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.6_hidden_n_50_mom_0_avg_epochs_29.0_reps_4.pkl',
+            'xavier___simul_sigmoid_alpha_0.04_batch_100_draw_r_1.0_hidden_n_50_mom_0_avg_epochs_29.75_reps_4.pkl',
+        ],
+    )
+
     # adagrad
     draw_chart(
         param_name='alpha',
         filenames=[
-            'alpha__simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_48.75_reps_4.pkl',
-            'alpha__simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_48.25_reps_4.pkl',
-            'alpha__simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_29.25_reps_4.pkl',
-
-            'alpha_adagrad_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_92.25_reps_4.pkl',
-            'alpha_adagrad_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_83.25_reps_4.pkl',
-            'alpha_adagrad_simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_46.25_reps_4.pkl',
-            'alpha_adagrad_simul_sigmoid_alpha_0.1_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_36.25_reps_4.pkl',
-            'alpha_adagrad_simul_sigmoid_alpha_0.25_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_85.75_reps_4.pkl',
+            'alpha_adagrad___simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_112.5_reps_4.pkl',
+            'alpha_adagrad___simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_58.0_reps_4.pkl',
+            'alpha_adagrad___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_56.0_reps_4.pkl',
+            'alpha_adagrad___simul_sigmoid_alpha_0.1_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_54.0_reps_4.pkl',
+            'alpha___simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_78.0_reps_4.pkl',
+            'alpha___simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_54.5_reps_4.pkl',
+            'alpha___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_32.25_reps_4.pkl',
         ],
     )
 
     draw_chart(
         param_name = 'momentum_param',
         filenames=[
-            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_38.2_reps_5.pkl',
-            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.25_avg_epochs_27.4_reps_5.pkl',
-            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.5_avg_epochs_24.2_reps_5.pkl',
-            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_0.75_avg_epochs_23.0_reps_5.pkl',
-            'momentum_simul_sigmoid_alpha_0.02_batch_100_draw_r_0.2_hidden_n_50_mom_1.0_avg_epochs_22.0_reps_5.pkl',
+            'momentum___simul_sigmoid_alpha_0.03_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_34.5_reps_4.pkl',
+            'momentum___simul_sigmoid_alpha_0.03_batch_100_draw_r_0.2_hidden_n_50_mom_0.25_avg_epochs_34.0_reps_4.pkl',
+            'momentum___simul_sigmoid_alpha_0.03_batch_100_draw_r_0.2_hidden_n_50_mom_0.5_avg_epochs_34.25_reps_4.pkl',
+            'momentum___simul_sigmoid_alpha_0.03_batch_100_draw_r_0.2_hidden_n_50_mom_0.75_avg_epochs_29.0_reps_4.pkl',
         ],
     )
-    # draw_chart(
-    #     param_name = 'momentum_param',
-    #     filenames=[
-    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0_avg_epochs_43.4_reps_5.pkl',
-    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.25_avg_epochs_34.2_reps_5.pkl',
-    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.5_avg_epochs_32.8_reps_5.pkl',
-    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_0.75_avg_epochs_33.0_reps_5.pkl',
-    #         'momentum2_simul_sigmoid_alpha_0.01_batch_100_draw_r_0.2_hidden_n_25_mom_1.0_avg_epochs_33.2_reps_5.pkl',
-    #     ],
-    # )
+
+    draw_chart(
+        param_name='alpha',
+        print_draw_type=True,
+        filenames=[
+            'alpha___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_32.25_reps_4.pkl',
+            'alpha_adagrad___simul_sigmoid_alpha_0.1_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_54.0_reps_4.pkl',
+            'momentum___simul_sigmoid_alpha_0.03_batch_100_draw_r_0.2_hidden_n_50_mom_0.5_avg_epochs_34.25_reps_4.pkl',
+            'he_normal___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_33.75_reps_4.pkl',
+            'xavier___simul_sigmoid_alpha_0.04_batch_100_draw_r_0.2_hidden_n_50_mom_0_avg_epochs_38.25_reps_4.pkl',
+        ],
+    )
 
 
 if __name__ == "__main__":
-    # basic_simulations()
+    basic_simulations()
     advanced_simulations()

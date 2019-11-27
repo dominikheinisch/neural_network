@@ -1,5 +1,3 @@
-import numpy as np
-
 from prediction.activation_function import SIGMOID, RELU
 from prediction.network import mlp
 from loader.mnist_loader import load_data_wrapper
@@ -7,7 +5,7 @@ from saver.saver import save
 
 
 def get_simul_params(activation, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param=0,
-                     use_adagrad=False):
+                     use_adagrad=False, draw_type='uniform'):
     return {
         'activation': activation,
         'alpha': alpha,
@@ -17,6 +15,7 @@ def get_simul_params(activation, alpha, batch_size, draw_range, hidden_neurones,
         'worse_result_limit': worse_result_limit,
         'momentum_param': momentum_param,
         'use_adagrad': use_adagrad,
+        'draw_type': draw_type,
     }
 
 
@@ -34,9 +33,9 @@ def run_many(repeats, func, params, **kwargs):
 
 
 def run_simulation(name, data, repeats, params):
-    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, use_adagrad\
+    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, use_adagrad, draw_type \
         = (params[p] for p in params)
-    many_res = run_many(repeats=repeats, func=mlp, data=data, params=params, images_len_divider=1)
+    many_res = run_many(repeats=repeats, func=mlp, data=data, params=params)
     print(many_res)
     save(data=many_res, filename=f'{name}_simul_{many_res["activation"]}_alpha_{alpha}_batch_{batch_size}_'
                                  f'draw_r_{draw_range}_hidden_n_{hidden_neurones}_mom_{momentum_param}_'
@@ -44,9 +43,9 @@ def run_simulation(name, data, repeats, params):
 
 
 def run_once(name, params, **kwargs):
-    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, use_adagrad \
+    _, alpha, batch_size, draw_range, hidden_neurones, worse_result_limit, momentum_param, use_adagrad, draw_type \
         = (params[p] for p in params)
-    result = mlp(**params, **kwargs, images_len_divider=1)
+    result = mlp(**params, **kwargs)
     print(result)
     save(data=result, filename=f'{name}_once_{params["activation"].activation.__name__}_alpha_{alpha}_'
                                f'batch_{batch_size}_draw_range_{draw_range}_hidden_neurones_{hidden_neurones}_'
@@ -56,39 +55,45 @@ def run_once(name, params, **kwargs):
 if __name__ == "__main__":
     loaded_data = load_data_wrapper("../data")
 
-    # np.random.seed(0)
-    # run_once(name='', data=loaded_data,
-    #          params=get_simul_params(activation=RELU, alpha=0.01, batch_size=10, draw_range=0.0001,
-    #                                  hidden_neurones=25, worse_result_limit=3, momentum_param=0.5))
     run_once(name='', data=loaded_data,
-             params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=0.2,
-                                     hidden_neurones=25, worse_result_limit=4, momentum_param=0, use_adagrad=True))
+             params=get_simul_params(activation=RELU, alpha=0.01, batch_size=10, draw_range=0.0001,
+                                     hidden_neurones=25, worse_result_limit=3, momentum_param=0.5))
+    run_once(name='xavier', data=loaded_data,
+             params=get_simul_params(activation=SIGMOID, alpha=0.03, batch_size=100, draw_range=0.2, hidden_neurones=50,
+                                     worse_result_limit=4, momentum_param=0.75, use_adagrad=False))
 
-    # for batch_size in [5, 10, 25, 50]:
-    #     run_simulation(name='batch2', data=loaded_data, repeats=2,
-    #                    params=get_simul_params(activation=RELU, alpha=0.01, batch_size=batch_size, draw_range=0.01,
-    #                                            hidden_neurones=50, worse_result_limit=2, momentum_param=0))
+    for batch_size in [5, 10, 25, 50]:
+        run_simulation(name='batch2', data=loaded_data, repeats=2,
+                       params=get_simul_params(activation=RELU, alpha=0.01, batch_size=batch_size, draw_range=0.01,
+                                               hidden_neurones=50, worse_result_limit=2, momentum_param=0))
 
-    # for momentum in [0, 0.25, 0.5, 0.75, 1.0]:
-    #     run_simulation(name='momentum2', data=loaded_data, repeats=5,
-    #                    params=get_simul_params(activation=SIGMOID, alpha=0.01, batch_size=100, draw_range=0.2,
-    #                                            hidden_neurones=25, worse_result_limit=2, momentum_param=momentum))
-    # for hidden_neurones in [15, 25, 50, 75]:
-    #     run_simulation(name='hidden_neurones4', data=loaded_data, repeats=5,
-    #                    params=get_simul_params(activation=RELU, alpha=0.01, batch_size=5, draw_range=0.2,
-    #                                            hidden_neurones=hidden_neurones, worse_result_limit=5, momentum_param=0))
+    for hidden_neurones in [15, 25, 50, 75]:
+        run_simulation(name='hidden_neurones4', data=loaded_data, repeats=5,
+                       params=get_simul_params(activation=RELU, alpha=0.01, batch_size=5, draw_range=0.2,
+                                               hidden_neurones=hidden_neurones, worse_result_limit=5, momentum_param=0))
 
-    #
-    # for alpha in [0.1, 0.25]:
-    #     run_simulation(name='alpha_adagrad', data=loaded_data, repeats=4,
-    #                    params=get_simul_params(activation=SIGMOID, alpha=alpha, batch_size=100, draw_range=0.2,
-    #                                            hidden_neurones=25, worse_result_limit=4, momentum_param=0,
-    #                                            use_adagrad=True))
-    #     run_simulation(name='alpha_', data=loaded_data, repeats=4,
-    #                    params=get_simul_params(activation=SIGMOID, alpha=alpha, batch_size=100, draw_range=0.2,
-    #                                            hidden_neurones=25, worse_result_limit=4, momentum_param=0))
-    #
-    # for draw_range in [0.4, 0.6, 0.8, 1.0]:
-    #     run_simulation(name='draw_range2', data=loaded_data, repeats=5,
-    #                    params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=draw_range,
-    #                                            hidden_neurones=50, worse_result_limit=2, momentum_param=0))
+
+    for alpha in [0.1]:
+        run_simulation(name='alpha_adagrad__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=alpha, batch_size=100, draw_range=0.2,
+                                               hidden_neurones=50, worse_result_limit=4, use_adagrad=True))
+        run_simulation(name='alpha__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=alpha, batch_size=100, draw_range=0.2,
+                                               hidden_neurones=50, worse_result_limit=4))
+
+
+    for draw_range in [0.2, 0.6, 1.0]:
+        run_simulation(name='draw_range__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=draw_range,
+                                               hidden_neurones=50, worse_result_limit=4, momentum_param=0))
+        run_simulation(name='xavier__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=draw_range,
+                                               hidden_neurones=50, worse_result_limit=4, draw_type = 'xavier'))
+        run_simulation(name='he_normal__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=0.04, batch_size=100, draw_range=draw_range,
+                                               hidden_neurones=50, worse_result_limit=4, draw_type = 'he_normal'))
+
+    for momentum in [0]:
+        run_simulation(name='momentum__', data=loaded_data, repeats=4,
+                       params=get_simul_params(activation=SIGMOID, alpha=0.03, batch_size=100, draw_range=0.2,
+                                               hidden_neurones=50, worse_result_limit=4, momentum_param=momentum))

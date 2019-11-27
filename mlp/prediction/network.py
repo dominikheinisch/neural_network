@@ -25,9 +25,15 @@ def add_bias(data):
     return np.append(np.ones(shape=(data[0].shape[0], BIAS_SIZE)), data[0], axis=1), data[1]
 
 
-def draw_weights(draw_range, input_len, output_len):
-    return np.random.uniform(low=-draw_range, high=draw_range, size=(input_len * output_len)) \
-        .reshape((input_len, output_len))
+def draw_weights(draw_range, input_len, output_len, draw_type):
+    if draw_type == 'uniform':
+        result = np.random.uniform(low=-draw_range, high=draw_range, size=(input_len * output_len))\
+            .reshape((input_len, output_len))
+    elif draw_type == 'xavier':
+        result = np.random.randn(input_len, output_len) * np.sqrt(1 / output_len)
+    elif draw_type == 'he_normal':
+        result = np.random.randn(input_len, output_len) * np.sqrt(2 / output_len)
+    return result
 
 
 def calc_delta_net(neurone_with_bias, error, delta_prev, momentum_param):
@@ -48,7 +54,7 @@ def calc_final_delta(alpha, delta, deltas_sum, use_adagrad, epsilon=1e-8):
 
 
 def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_result_limit=2, momentum_param=0,
-        use_adagrad=False, images_len_divider=1):
+        use_adagrad=False, draw_type='uniform' ,images_len_divider=1):
     training_data, validation_data, test_data = [add_bias(d) for d in data]
     tr_in, tr_out = (data[: len(data) // images_len_divider] for data in training_data)
     activation_func, activation_func_prim = activation.activation, activation.activation_prim
@@ -56,9 +62,9 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
     images_len, input_data_len = tr_in.shape[0], tr_in.shape[1]
     hidden_neurones_size, output_neurones_size = hidden_neurones, tr_out.shape[1]
 
-    weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size)
+    weights_hidden = draw_weights(draw_range=draw_range, input_len=input_data_len, output_len=hidden_neurones_size, draw_type=draw_type)
     hidden_neurones_size = hidden_neurones_size + BIAS_SIZE
-    weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size, output_len=output_neurones_size)
+    weights_output = draw_weights(draw_range=draw_range, input_len=hidden_neurones_size, output_len=output_neurones_size, draw_type=draw_type)
 
     res_weights, validation_accuracies, test_accuracies, elapsed_times = [], [], [], []
     epochs, worse_result_counter = 0, 0
@@ -79,7 +85,6 @@ def mlp(data, activation, alpha, draw_range, batch_size, hidden_neurones, worse_
             test_accuracies.append(calc_prediction_accuracy(activation_func, weights_hidden, weights_output, *test_data))
             print(epochs, ' result: ', test_accuracies[-1])
             print(epochs, ' validation_accuracies', validation_accuracies[-1])
-            print(output_deltas_sum.sum())
 
             if worse_result_counter < worse_result_limit:
                 weights_hidden_delta_prev = np.zeros(shape=(weights_hidden.shape))
