@@ -3,7 +3,7 @@ import numpy as np
 from plotters.chart_plotter import calc_avg_duration
 from loader.loader import load
 from loader.mnist_loader import load_data_wrapper
-from prediction.activation_function import SIGMOID, RELU
+from prediction.activation_function import SIGMOID
 from prediction.network import add_bias, calc_prediction_accuracy, mlp
 
 def test_calc_prediction_accuracy():
